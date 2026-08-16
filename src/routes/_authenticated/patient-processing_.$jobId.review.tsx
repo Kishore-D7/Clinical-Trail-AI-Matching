@@ -1,5 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+
 import {
   AlertTriangle,
   ArrowLeft,
@@ -10,6 +12,8 @@ import {
   Pencil,
   Save,
   ShieldCheck,
+  UserPlus,
+
   XCircle,
 } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -42,6 +46,8 @@ import { Slider } from "@/components/ui/slider";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDateTime, humanize } from "@/lib/patients";
+import { importJobPatients } from "@/lib/processing.functions";
+
 import {
   asExtractedFields,
   DEFAULT_CONFIDENCE_THRESHOLD,
@@ -205,7 +211,22 @@ function ReviewPage() {
       queryClient.invalidateQueries({ queryKey: ["processing-jobs"] }),
     ]);
 
+  const runImport = useServerFn(importJobPatients);
+  const importMutation = useMutation({
+    mutationFn: async (ids: string[]) =>
+      runImport({ data: ids.length > 0 ? { jobId, recordIds: ids } : { jobId } }),
+    onSuccess: async (result) => {
+      await invalidate();
+      await queryClient.invalidateQueries({ queryKey: ["patients"] });
+      toast.success(
+        `${result.imported} patient${result.imported === 1 ? "" : "s"} added, ${result.linkedExisting} updated`,
+      );
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+
   const statusMutation = useMutation({
+
     mutationFn: async ({ ids, status }: { ids: string[]; status: ProcessingRecordStatus }) => {
       const userId = status === "VERIFIED" ? await currentUserId() : null;
       const { error } = await supabase
@@ -422,6 +443,20 @@ function ReviewPage() {
               {selectedIds.length} selected of {filtered.length} shown
             </span>
             <div className="ml-auto flex flex-wrap gap-2">
+              <Button
+                size="sm"
+                variant="secondary"
+                disabled={!canManage || importMutation.isPending}
+                onClick={() => importMutation.mutate(selectedIds)}
+              >
+                {importMutation.isPending ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <UserPlus className="size-4" />
+                )}
+                {selectedIds.length > 0 ? "Import selected to registry" : "Import all to registry"}
+              </Button>
+
               <Button
                 size="sm"
                 disabled={!canManage || busy || selectedIds.length === 0}

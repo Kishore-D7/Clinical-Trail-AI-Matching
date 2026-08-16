@@ -77,7 +77,19 @@ function MatchingEnginePage() {
     },
   });
 
+  const patientCountQuery = useQuery({
+    queryKey: ["matching-patient-count"],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from("patients")
+        .select("id", { count: "exact", head: true });
+      if (error) throw new Error(error.message);
+      return count ?? 0;
+    },
+  });
+
   const criteriaQuery = useQuery({
+
     queryKey: ["matching-criteria", trialId],
     enabled: Boolean(trialId),
     queryFn: async () => {
@@ -183,6 +195,26 @@ function MatchingEnginePage() {
               </Link>
             </Button>
           </div>
+
+          {patientCountQuery.data === 0 ? (
+            <div className="rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-sm text-amber-700 dark:text-amber-300">
+              There are no patients in the registry yet, so every run evaluates 0 patients. Add
+              patients on the{" "}
+              <Link to="/patients" className="underline">
+                Patients
+              </Link>{" "}
+              page, or import reviewed extractions from{" "}
+              <Link to="/patient-processing" className="underline">
+                Patient Processing
+              </Link>{" "}
+              using “Import to registry”.
+            </div>
+          ) : patientCountQuery.data ? (
+            <p className="text-sm text-muted-foreground">
+              {formatNumber(patientCountQuery.data, 0)} patients in the registry will be evaluated.
+            </p>
+          ) : null}
+
 
           {stats ? (
             <div className="space-y-3">
