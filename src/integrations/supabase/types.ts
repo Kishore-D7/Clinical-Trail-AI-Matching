@@ -555,6 +555,80 @@ export type Database = {
           },
         ]
       }
+      trial_criteria_extractions: {
+        Row: {
+          confirmed_at: string | null
+          confirmed_by: string | null
+          confirmed_criteria: Json | null
+          created_at: string
+          created_by: string | null
+          criteria_count: number
+          error_message: string | null
+          id: string
+          is_mock: boolean
+          model: string | null
+          notes: string[]
+          provider: string | null
+          raw_response: Json | null
+          source_name: string | null
+          source_text: string
+          source_type: string
+          status: Database["public"]["Enums"]["criteria_extraction_status"]
+          trial_id: string
+          updated_at: string
+        }
+        Insert: {
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          confirmed_criteria?: Json | null
+          created_at?: string
+          created_by?: string | null
+          criteria_count?: number
+          error_message?: string | null
+          id?: string
+          is_mock?: boolean
+          model?: string | null
+          notes?: string[]
+          provider?: string | null
+          raw_response?: Json | null
+          source_name?: string | null
+          source_text?: string
+          source_type?: string
+          status?: Database["public"]["Enums"]["criteria_extraction_status"]
+          trial_id: string
+          updated_at?: string
+        }
+        Update: {
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          confirmed_criteria?: Json | null
+          created_at?: string
+          created_by?: string | null
+          criteria_count?: number
+          error_message?: string | null
+          id?: string
+          is_mock?: boolean
+          model?: string | null
+          notes?: string[]
+          provider?: string | null
+          raw_response?: Json | null
+          source_name?: string | null
+          source_text?: string
+          source_type?: string
+          status?: Database["public"]["Enums"]["criteria_extraction_status"]
+          trial_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trial_criteria_extractions_trial_id_fkey"
+            columns: ["trial_id"]
+            isOneToOne: false
+            referencedRelation: "clinical_trials"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       trial_matches: {
         Row: {
           created_at: string
@@ -659,6 +733,13 @@ export type Database = {
     }
     Enums: {
       app_role: "RESEARCHER" | "CLINICAL_COORDINATOR" | "ADMIN"
+      criteria_extraction_status:
+        | "PENDING"
+        | "PROCESSING"
+        | "COMPLETED"
+        | "FAILED"
+        | "CONFIRMED"
+        | "DISCARDED"
       criterion_type: "INCLUSION" | "EXCLUSION"
       extraction_run_status: "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED"
       extraction_source: "AI" | "MANUAL"
@@ -806,6 +887,14 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["RESEARCHER", "CLINICAL_COORDINATOR", "ADMIN"],
+      criteria_extraction_status: [
+        "PENDING",
+        "PROCESSING",
+        "COMPLETED",
+        "FAILED",
+        "CONFIRMED",
+        "DISCARDED",
+      ],
       criterion_type: ["INCLUSION", "EXCLUSION"],
       extraction_run_status: ["PENDING", "PROCESSING", "COMPLETED", "FAILED"],
       extraction_source: ["AI", "MANUAL"],
