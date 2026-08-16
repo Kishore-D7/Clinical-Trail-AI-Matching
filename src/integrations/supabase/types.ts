@@ -101,6 +101,76 @@ export type Database = {
           },
         ]
       }
+      patient_ai_extractions: {
+        Row: {
+          average_confidence: number | null
+          created_at: string
+          created_by: string | null
+          document_id: string | null
+          error_message: string | null
+          extracted_at: string
+          field_count: number
+          fields_extracted: string[]
+          id: string
+          model: string | null
+          patient_id: string
+          status: Database["public"]["Enums"]["extraction_run_status"]
+          updated_at: string
+        }
+        Insert: {
+          average_confidence?: number | null
+          created_at?: string
+          created_by?: string | null
+          document_id?: string | null
+          error_message?: string | null
+          extracted_at?: string
+          field_count?: number
+          fields_extracted?: string[]
+          id?: string
+          model?: string | null
+          patient_id: string
+          status?: Database["public"]["Enums"]["extraction_run_status"]
+          updated_at?: string
+        }
+        Update: {
+          average_confidence?: number | null
+          created_at?: string
+          created_by?: string | null
+          document_id?: string | null
+          error_message?: string | null
+          extracted_at?: string
+          field_count?: number
+          fields_extracted?: string[]
+          id?: string
+          model?: string | null
+          patient_id?: string
+          status?: Database["public"]["Enums"]["extraction_run_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "patient_ai_extractions_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "patient_documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "patient_ai_extractions_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patient_list_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "patient_ai_extractions_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       patient_conditions: {
         Row: {
           created_at: string
@@ -525,6 +595,7 @@ export type Database = {
     }
     Enums: {
       app_role: "RESEARCHER" | "CLINICAL_COORDINATOR" | "ADMIN"
+      extraction_run_status: "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED"
       extraction_source: "AI" | "MANUAL"
       measurement_metric:
         | "HBA1C"
@@ -663,6 +734,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["RESEARCHER", "CLINICAL_COORDINATOR", "ADMIN"],
+      extraction_run_status: ["PENDING", "PROCESSING", "COMPLETED", "FAILED"],
       extraction_source: ["AI", "MANUAL"],
       measurement_metric: [
         "HBA1C",
