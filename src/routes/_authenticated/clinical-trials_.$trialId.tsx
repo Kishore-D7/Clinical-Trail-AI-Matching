@@ -7,12 +7,14 @@ import {
   ListChecks,
   Pencil,
   Plus,
+  Sparkles,
   Trash2,
   Users,
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { AiExtractCriteriaDialog } from "@/components/trials/ai-extract-dialog";
 import { CriterionDialog } from "@/components/trials/criterion-dialog";
 import { TrialFormDialog } from "@/components/trials/trial-form-dialog";
 import {
@@ -82,6 +84,7 @@ function TrialDetailPage() {
 
   const [editOpen, setEditOpen] = useState(false);
   const [criterionOpen, setCriterionOpen] = useState(false);
+  const [aiExtractOpen, setAiExtractOpen] = useState(false);
   const [editingCriterion, setEditingCriterion] = useState<CriterionRow | null>(null);
   const [pendingCriterion, setPendingCriterion] = useState<CriterionRow | null>(null);
 
@@ -622,6 +625,12 @@ function TrialDetailPage() {
         onOpenChange={setEditOpen}
         trial={trial}
         criteria={criteria}
+      />
+
+      <AiExtractCriteriaDialog
+        open={aiExtractOpen}
+        onOpenChange={setAiExtractOpen}
+        trialId={trialId}
       />
 
       <CriterionDialog
