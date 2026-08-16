@@ -288,17 +288,28 @@ function TrialDetailPage() {
                   {inclusion.length} inclusion · {exclusion.length} exclusion
                 </CardDescription>
               </div>
-              <Button
-                size="sm"
-                disabled={!canManage}
-                onClick={() => {
-                  setEditingCriterion(null);
-                  setCriterionOpen(true);
-                }}
-              >
-                <Plus className="size-4" /> Add criterion
-              </Button>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={!canManage}
+                  onClick={() => setAiExtractOpen(true)}
+                >
+                  <Sparkles className="size-4" /> AI Extract Criteria
+                </Button>
+                <Button
+                  size="sm"
+                  disabled={!canManage}
+                  onClick={() => {
+                    setEditingCriterion(null);
+                    setCriterionOpen(true);
+                  }}
+                >
+                  <Plus className="size-4" /> Add criterion
+                </Button>
+              </div>
             </CardHeader>
+
             <CardContent className="px-0 sm:px-6">
               {criteriaQuery.isLoading ? (
                 <div className="space-y-2 px-4 sm:px-0">
