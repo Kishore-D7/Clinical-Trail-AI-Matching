@@ -26,6 +26,7 @@ import { Route as AuthenticatedPatientsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedClinicalTrialsTrialIdRouteImport } from './routes/_authenticated/clinical-trials_.$trialId'
 import { Route as AuthenticatedPatientsPatientIdRouteImport } from './routes/_authenticated/patients_.$patientId'
+import { Route as AuthenticatedTrialCandidatesTrialIdRouteImport } from './routes/_authenticated/trial-candidates.$trialId'
 import { Route as AuthenticatedPatientProcessingJobIdReviewRouteImport } from './routes/_authenticated/patient-processing_.$jobId.review'
 
 const IndexRoute = IndexRouteImport.update({
@@ -117,6 +118,12 @@ const AuthenticatedPatientsPatientIdRoute =
     path: '/patients/$patientId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedTrialCandidatesTrialIdRoute =
+  AuthenticatedTrialCandidatesTrialIdRouteImport.update({
+    id: '/trial-candidates/$trialId',
+    path: '/trial-candidates/$trialId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedPatientProcessingJobIdReviewRoute =
   AuthenticatedPatientProcessingJobIdReviewRouteImport.update({
     id: '/patient-processing_/$jobId/review',
@@ -141,6 +148,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof AuthenticatedSettingsRoute
   '/clinical-trials/$trialId': typeof AuthenticatedClinicalTrialsTrialIdRoute
   '/patients/$patientId': typeof AuthenticatedPatientsPatientIdRoute
+  '/trial-candidates/$trialId': typeof AuthenticatedTrialCandidatesTrialIdRoute
   '/patient-processing/$jobId/review': typeof AuthenticatedPatientProcessingJobIdReviewRoute
 }
 export interface FileRoutesByTo {
@@ -160,6 +168,7 @@ export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsRoute
   '/clinical-trials/$trialId': typeof AuthenticatedClinicalTrialsTrialIdRoute
   '/patients/$patientId': typeof AuthenticatedPatientsPatientIdRoute
+  '/trial-candidates/$trialId': typeof AuthenticatedTrialCandidatesTrialIdRoute
   '/patient-processing/$jobId/review': typeof AuthenticatedPatientProcessingJobIdReviewRoute
 }
 export interface FileRoutesById {
@@ -181,6 +190,7 @@ export interface FileRoutesById {
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/clinical-trials_/$trialId': typeof AuthenticatedClinicalTrialsTrialIdRoute
   '/_authenticated/patients_/$patientId': typeof AuthenticatedPatientsPatientIdRoute
+  '/_authenticated/trial-candidates/$trialId': typeof AuthenticatedTrialCandidatesTrialIdRoute
   '/_authenticated/patient-processing_/$jobId/review': typeof AuthenticatedPatientProcessingJobIdReviewRoute
 }
 export interface FileRouteTypes {
@@ -202,6 +212,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/clinical-trials/$trialId'
     | '/patients/$patientId'
+    | '/trial-candidates/$trialId'
     | '/patient-processing/$jobId/review'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -221,6 +232,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/clinical-trials/$trialId'
     | '/patients/$patientId'
+    | '/trial-candidates/$trialId'
     | '/patient-processing/$jobId/review'
   id:
     | '__root__'
@@ -241,6 +253,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings'
     | '/_authenticated/clinical-trials_/$trialId'
     | '/_authenticated/patients_/$patientId'
+    | '/_authenticated/trial-candidates/$trialId'
     | '/_authenticated/patient-processing_/$jobId/review'
   fileRoutesById: FileRoutesById
 }
@@ -372,6 +385,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPatientsPatientIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/trial-candidates/$trialId': {
+      id: '/_authenticated/trial-candidates/$trialId'
+      path: '/trial-candidates/$trialId'
+      fullPath: '/trial-candidates/$trialId'
+      preLoaderRoute: typeof AuthenticatedTrialCandidatesTrialIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/patient-processing_/$jobId/review': {
       id: '/_authenticated/patient-processing_/$jobId/review'
       path: '/patient-processing/$jobId/review'
@@ -396,6 +416,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedClinicalTrialsTrialIdRoute: typeof AuthenticatedClinicalTrialsTrialIdRoute
   AuthenticatedPatientsPatientIdRoute: typeof AuthenticatedPatientsPatientIdRoute
+  AuthenticatedTrialCandidatesTrialIdRoute: typeof AuthenticatedTrialCandidatesTrialIdRoute
   AuthenticatedPatientProcessingJobIdReviewRoute: typeof AuthenticatedPatientProcessingJobIdReviewRoute
 }
 
@@ -414,6 +435,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedClinicalTrialsTrialIdRoute:
     AuthenticatedClinicalTrialsTrialIdRoute,
   AuthenticatedPatientsPatientIdRoute: AuthenticatedPatientsPatientIdRoute,
+  AuthenticatedTrialCandidatesTrialIdRoute:
+    AuthenticatedTrialCandidatesTrialIdRoute,
   AuthenticatedPatientProcessingJobIdReviewRoute:
     AuthenticatedPatientProcessingJobIdReviewRoute,
 }
