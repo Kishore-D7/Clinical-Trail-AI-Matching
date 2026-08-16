@@ -67,8 +67,8 @@ export function criterionExpression(criterion: {
   field: string;
   operator: string;
   value: string;
-  value_secondary?: string | null;
-  unit?: string | null;
+  value_secondary?: string | null | undefined;
+  unit?: string | null | undefined;
 }) {
   const unit = criterion.unit ? ` ${criterion.unit}` : "";
   if (criterion.operator === "BETWEEN") {
