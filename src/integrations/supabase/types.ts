@@ -18,37 +18,52 @@ export type Database = {
         Row: {
           condition: string | null
           created_at: string
+          created_by: string | null
+          description: string | null
+          end_date: string | null
           id: string
           location: string | null
           nct_id: string | null
           phase: string | null
           sponsor: string | null
-          status: string
+          start_date: string | null
+          status: Database["public"]["Enums"]["trial_status"]
           title: string
+          trial_code: string
           updated_at: string
         }
         Insert: {
           condition?: string | null
           created_at?: string
+          created_by?: string | null
+          description?: string | null
+          end_date?: string | null
           id?: string
           location?: string | null
           nct_id?: string | null
           phase?: string | null
           sponsor?: string | null
-          status?: string
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["trial_status"]
           title: string
+          trial_code: string
           updated_at?: string
         }
         Update: {
           condition?: string | null
           created_at?: string
+          created_by?: string | null
+          description?: string | null
+          end_date?: string | null
           id?: string
           location?: string | null
           nct_id?: string | null
           phase?: string | null
           sponsor?: string | null
-          status?: string
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["trial_status"]
           title?: string
+          trial_code?: string
           updated_at?: string
         }
         Relationships: []
@@ -484,6 +499,62 @@ export type Database = {
         }
         Relationships: []
       }
+      trial_criteria: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          criterion_type: Database["public"]["Enums"]["criterion_type"]
+          description: string | null
+          field: string
+          id: string
+          operator: string
+          required: boolean
+          trial_id: string
+          unit: string | null
+          updated_at: string
+          value: string
+          value_secondary: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          criterion_type?: Database["public"]["Enums"]["criterion_type"]
+          description?: string | null
+          field: string
+          id?: string
+          operator: string
+          required?: boolean
+          trial_id: string
+          unit?: string | null
+          updated_at?: string
+          value: string
+          value_secondary?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          criterion_type?: Database["public"]["Enums"]["criterion_type"]
+          description?: string | null
+          field?: string
+          id?: string
+          operator?: string
+          required?: boolean
+          trial_id?: string
+          unit?: string | null
+          updated_at?: string
+          value?: string
+          value_secondary?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trial_criteria_trial_id_fkey"
+            columns: ["trial_id"]
+            isOneToOne: false
+            referencedRelation: "clinical_trials"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       trial_matches: {
         Row: {
           created_at: string
@@ -588,6 +659,7 @@ export type Database = {
     }
     Enums: {
       app_role: "RESEARCHER" | "CLINICAL_COORDINATOR" | "ADMIN"
+      criterion_type: "INCLUSION" | "EXCLUSION"
       extraction_run_status: "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED"
       extraction_source: "AI" | "MANUAL"
       measurement_metric:
@@ -598,6 +670,13 @@ export type Database = {
         | "DIASTOLIC_BP"
         | "LDL"
         | "EGFR"
+      trial_status:
+        | "DRAFT"
+        | "RECRUITING"
+        | "ACTIVE"
+        | "PAUSED"
+        | "COMPLETED"
+        | "CLOSED"
       verification_status: "UNVERIFIED" | "VERIFIED" | "CORRECTED"
     }
     CompositeTypes: {
@@ -727,6 +806,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["RESEARCHER", "CLINICAL_COORDINATOR", "ADMIN"],
+      criterion_type: ["INCLUSION", "EXCLUSION"],
       extraction_run_status: ["PENDING", "PROCESSING", "COMPLETED", "FAILED"],
       extraction_source: ["AI", "MANUAL"],
       measurement_metric: [
@@ -737,6 +817,14 @@ export const Constants = {
         "DIASTOLIC_BP",
         "LDL",
         "EGFR",
+      ],
+      trial_status: [
+        "DRAFT",
+        "RECRUITING",
+        "ACTIVE",
+        "PAUSED",
+        "COMPLETED",
+        "CLOSED",
       ],
       verification_status: ["UNVERIFIED", "VERIFIED", "CORRECTED"],
     },
