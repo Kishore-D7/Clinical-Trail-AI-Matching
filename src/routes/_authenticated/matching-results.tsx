@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ChevronDown, ChevronRight, ListChecks, Search } from "lucide-react";
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -223,9 +223,8 @@ function MatchingResultsPage() {
                     const isOpen = expanded === row.id;
                     const matchStatus = row.status as MatchStatus;
                     return (
-                      <>
+                      <Fragment key={row.id}>
                         <TableRow
-                          key={row.id}
                           className="cursor-pointer"
                           onClick={() => setExpanded(isOpen ? null : row.id)}
                         >
@@ -270,7 +269,7 @@ function MatchingResultsPage() {
                           </TableCell>
                         </TableRow>
                         {isOpen ? (
-                          <TableRow key={`${row.id}-detail`}>
+                          <TableRow>
                             <TableCell colSpan={7} className="bg-muted/40">
                               <div className="space-y-3 py-2">
                                 <p className="text-sm">{row.summary ?? "—"}</p>
@@ -330,7 +329,7 @@ function MatchingResultsPage() {
                             </TableCell>
                           </TableRow>
                         ) : null}
-                      </>
+                      </Fragment>
                     );
                   })}
                 </TableBody>
