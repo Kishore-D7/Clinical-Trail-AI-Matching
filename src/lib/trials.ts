@@ -130,3 +130,7 @@ export const criterionSchema = z
   });
 
 export type CriterionFormValues = z.infer<typeof criterionSchema>;
+
+export function humanizeType(value: string) {
+  return value.charAt(0) + value.slice(1).toLowerCase();
+}

@@ -28,7 +28,7 @@ import {
   criterionSchema,
   humanizeType,
   type CriterionFormValues,
-} from "@/lib/trials-ui";
+} from "@/lib/trials";
 
 export const emptyCriterion: CriterionFormValues = {
   criterion_type: "INCLUSION",
