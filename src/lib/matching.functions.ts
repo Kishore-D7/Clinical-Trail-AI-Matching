@@ -5,15 +5,20 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 /** Run one deterministic matching batch for a trial (no AI involved). */
 export const runTrialMatchBatch = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { trialId: string; offset?: number }) => {
+  .inputValidator((input: { trialId: string; offset?: number; jobId?: string | null }) => {
     if (!input?.trialId) throw new Error("A trial is required");
     const offset = Number(input.offset ?? 0);
-    return { trialId: input.trialId, offset: Number.isFinite(offset) && offset > 0 ? Math.floor(offset) : 0 };
+    return {
+      trialId: input.trialId,
+      offset: Number.isFinite(offset) && offset > 0 ? Math.floor(offset) : 0,
+      jobId: input.jobId ?? null,
+    };
   })
   .handler(async ({ data, context }) => {
     const { runMatchBatch } = await import("@/lib/matching/run.server");
-    return runMatchBatch(context.supabase, data.trialId, data.offset);
+    return runMatchBatch(context.supabase, data.trialId, data.offset, { jobId: data.jobId });
   });
+
 
 /** Re-evaluate a single patient against a single trial. */
 export const matchPatientToTrial = createServerFn({ method: "POST" })
