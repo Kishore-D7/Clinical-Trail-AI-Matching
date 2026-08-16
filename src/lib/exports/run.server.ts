@@ -54,7 +54,7 @@ export async function runCandidateExport(supabase: Client, userId: string, input
     needs_review_count: built.counts.needsReview,
     ineligible_count: built.counts.ineligible,
     engine_version: MATCHING_ENGINE_VERSION,
-    metadata: built.metadata as unknown as Database["public"]["Tables"]["candidate_exports"]["Insert"]["metadata"],
+    metadata: JSON.parse(JSON.stringify(built.metadata)) as Database["public"]["Tables"]["candidate_exports"]["Row"]["metadata"],
     error_message: null,
     generated_at: built.metadata.generatedAt,
     created_by: userId,
@@ -98,7 +98,7 @@ export async function signCandidateExport(supabase: Client, exportId: string) {
   if (!data?.storage_path) throw new Error("This export has no stored file yet");
   const signed = await supabase.storage
     .from(CANDIDATE_EXPORT_BUCKET)
-    .createSignedUrl(data.storage_path, 300, { download: data.file_name ?? undefined });
+    .createSignedUrl(data.storage_path, 300, { download: data.file_name ?? true });
   if (signed.error) throw new Error(signed.error.message);
   return { url: signed.data.signedUrl, fileName: data.file_name ?? "candidate-export" };
 }
