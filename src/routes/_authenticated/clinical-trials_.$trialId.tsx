@@ -128,7 +128,22 @@ function TrialDetailPage() {
     },
   });
 
+  const extractionsQuery = useQuery({
+    queryKey: ["trial-extractions", trialId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("trial_criteria_extractions")
+        .select("*")
+        .eq("trial_id", trialId)
+        .order("created_at", { ascending: false })
+        .limit(25);
+      if (error) throw new Error(error.message);
+      return data ?? [];
+    },
+  });
+
   const documentsQuery = useQuery({
+
     queryKey: ["trial-documents", trialId],
     queryFn: async () => {
       const { data, error } = await supabase
