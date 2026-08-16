@@ -102,7 +102,18 @@ const headerStrategy: SegmentationStrategy = {
         if (isBoundary(line) && offset > 0) starts.push(offset);
         offset += line.length + 1;
       });
-      const bounds = [0, ...starts, chunk.text.length];
+      // Header blocks ("Patient ID:" followed by "Patient Name:", "MRN:", ...)
+      // belong to the SAME patient, so collapse boundaries that sit close together.
+      const MIN_RECORD_CHARS = 200;
+      const keptStarts: number[] = [];
+      let lastStart = 0;
+      for (const start of starts) {
+        if (start - lastStart < MIN_RECORD_CHARS) continue;
+        keptStarts.push(start);
+        lastStart = start;
+      }
+      const bounds = [0, ...keptStarts, chunk.text.length];
+
       for (let i = 0; i < bounds.length - 1; i += 1) {
         const start = bounds[i]!;
         const end = bounds[i + 1]!;
