@@ -24,6 +24,7 @@ import { Route as AuthenticatedMonitoringRouteImport } from './routes/_authentic
 import { Route as AuthenticatedPatientProcessingRouteImport } from './routes/_authenticated/patient-processing'
 import { Route as AuthenticatedPatientsRouteImport } from './routes/_authenticated/patients'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedPatientsPatientIdRouteImport } from './routes/_authenticated/patients_.$patientId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -102,6 +103,12 @@ const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedPatientsPatientIdRoute =
+  AuthenticatedPatientsPatientIdRouteImport.update({
+    id: '/patients_/$patientId',
+    path: '/patients/$patientId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -118,6 +125,7 @@ export interface FileRoutesByFullPath {
   '/patient-processing': typeof AuthenticatedPatientProcessingRoute
   '/patients': typeof AuthenticatedPatientsRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/patients/$patientId': typeof AuthenticatedPatientsPatientIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -134,6 +142,7 @@ export interface FileRoutesByTo {
   '/patient-processing': typeof AuthenticatedPatientProcessingRoute
   '/patients': typeof AuthenticatedPatientsRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/patients/$patientId': typeof AuthenticatedPatientsPatientIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -152,6 +161,7 @@ export interface FileRoutesById {
   '/_authenticated/patient-processing': typeof AuthenticatedPatientProcessingRoute
   '/_authenticated/patients': typeof AuthenticatedPatientsRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/patients_/$patientId': typeof AuthenticatedPatientsPatientIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -170,6 +180,7 @@ export interface FileRouteTypes {
     | '/patient-processing'
     | '/patients'
     | '/settings'
+    | '/patients/$patientId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -186,6 +197,7 @@ export interface FileRouteTypes {
     | '/patient-processing'
     | '/patients'
     | '/settings'
+    | '/patients/$patientId'
   id:
     | '__root__'
     | '/'
@@ -203,6 +215,7 @@ export interface FileRouteTypes {
     | '/_authenticated/patient-processing'
     | '/_authenticated/patients'
     | '/_authenticated/settings'
+    | '/_authenticated/patients_/$patientId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -319,6 +332,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/patients_/$patientId': {
+      id: '/_authenticated/patients_/$patientId'
+      path: '/patients/$patientId'
+      fullPath: '/patients/$patientId'
+      preLoaderRoute: typeof AuthenticatedPatientsPatientIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -334,6 +354,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPatientProcessingRoute: typeof AuthenticatedPatientProcessingRoute
   AuthenticatedPatientsRoute: typeof AuthenticatedPatientsRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedPatientsPatientIdRoute: typeof AuthenticatedPatientsPatientIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -348,6 +369,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPatientProcessingRoute: AuthenticatedPatientProcessingRoute,
   AuthenticatedPatientsRoute: AuthenticatedPatientsRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedPatientsPatientIdRoute: AuthenticatedPatientsPatientIdRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
