@@ -14,6 +14,99 @@ export type Database = {
   }
   public: {
     Tables: {
+      candidate_exports: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          engine_version: string
+          error_message: string | null
+          file_name: string | null
+          file_size: number
+          format: string
+          generated_at: string | null
+          id: string
+          ineligible_count: number
+          job_id: string | null
+          metadata: Json
+          name: string
+          needs_review_count: number
+          patient_count: number
+          potential_count: number
+          scope: Database["public"]["Enums"]["candidate_export_scope"]
+          status: Database["public"]["Enums"]["candidate_export_status"]
+          storage_path: string | null
+          trial_code: string | null
+          trial_id: string | null
+          trial_title: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          engine_version?: string
+          error_message?: string | null
+          file_name?: string | null
+          file_size?: number
+          format?: string
+          generated_at?: string | null
+          id?: string
+          ineligible_count?: number
+          job_id?: string | null
+          metadata?: Json
+          name: string
+          needs_review_count?: number
+          patient_count?: number
+          potential_count?: number
+          scope?: Database["public"]["Enums"]["candidate_export_scope"]
+          status?: Database["public"]["Enums"]["candidate_export_status"]
+          storage_path?: string | null
+          trial_code?: string | null
+          trial_id?: string | null
+          trial_title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          engine_version?: string
+          error_message?: string | null
+          file_name?: string | null
+          file_size?: number
+          format?: string
+          generated_at?: string | null
+          id?: string
+          ineligible_count?: number
+          job_id?: string | null
+          metadata?: Json
+          name?: string
+          needs_review_count?: number
+          patient_count?: number
+          potential_count?: number
+          scope?: Database["public"]["Enums"]["candidate_export_scope"]
+          status?: Database["public"]["Enums"]["candidate_export_status"]
+          storage_path?: string | null
+          trial_code?: string | null
+          trial_id?: string | null
+          trial_title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "candidate_exports_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "processing_jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_exports_trial_id_fkey"
+            columns: ["trial_id"]
+            isOneToOne: false
+            referencedRelation: "clinical_trials"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clinical_trials: {
         Row: {
           condition: string | null
@@ -1063,6 +1156,12 @@ export type Database = {
     }
     Enums: {
       app_role: "RESEARCHER" | "CLINICAL_COORDINATOR" | "ADMIN"
+      candidate_export_scope:
+        | "ALL"
+        | "POTENTIAL_MATCH"
+        | "NEEDS_REVIEW"
+        | "INELIGIBLE"
+      candidate_export_status: "PENDING" | "GENERATING" | "READY" | "FAILED"
       criteria_extraction_status:
         | "PENDING"
         | "PROCESSING"
@@ -1233,6 +1332,13 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["RESEARCHER", "CLINICAL_COORDINATOR", "ADMIN"],
+      candidate_export_scope: [
+        "ALL",
+        "POTENTIAL_MATCH",
+        "NEEDS_REVIEW",
+        "INELIGIBLE",
+      ],
+      candidate_export_status: ["PENDING", "GENERATING", "READY", "FAILED"],
       criteria_extraction_status: [
         "PENDING",
         "PROCESSING",
