@@ -25,11 +25,12 @@ import {
 } from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  criterionResultTone,
+  criterionOutcome,
   matchStatusLabel,
   matchStatusTone,
   type MatchStatus,
 } from "@/lib/matching/engine";
+
 import { formatDateTime, formatNumber } from "@/lib/patients";
 import { cn } from "@/lib/utils";
 
@@ -305,17 +306,22 @@ function MatchingResultsPage() {
                                             <TableCell>{result.actual_value ?? "—"}</TableCell>
                                             <TableCell>{result.expected_value}</TableCell>
                                             <TableCell>
-                                              <Badge
-                                                variant="outline"
-                                                className={cn(
-                                                  criterionResultTone[
-                                                    result.result as "PASS" | "FAIL" | "UNKNOWN"
-                                                  ],
-                                                )}
-                                              >
-                                                {result.result}
-                                              </Badge>
+                                              {(() => {
+                                                const outcome = criterionOutcome(
+                                                  result.criterion_type,
+                                                  result.result as "PASS" | "FAIL" | "UNKNOWN",
+                                                );
+                                                return (
+                                                  <Badge
+                                                    variant="outline"
+                                                    className={cn(outcome.tone)}
+                                                  >
+                                                    {outcome.label}
+                                                  </Badge>
+                                                );
+                                              })()}
                                             </TableCell>
+
                                             <TableCell className="text-xs text-muted-foreground">
                                               {result.reason ?? "—"}
                                             </TableCell>

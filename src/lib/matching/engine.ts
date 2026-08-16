@@ -87,6 +87,24 @@ export const matchStatusLabel: Record<MatchStatus, string> = {
   INELIGIBLE: "Ineligible",
 };
 
+/**
+ * Present a raw criterion result in eligibility terms.
+ * For an EXCLUSION criterion a PASS means the exclusion matched the patient,
+ * which makes the patient ineligible — so it must never read as a green "PASS".
+ */
+export function criterionOutcome(criterionType: CriterionType, result: CriterionResult) {
+  if (result === "UNKNOWN") return { label: "Unknown", tone: criterionResultTone.UNKNOWN };
+  if (criterionType === "EXCLUSION") {
+    return result === "PASS"
+      ? { label: "Excluded", tone: criterionResultTone.FAIL }
+      : { label: "Not excluded", tone: criterionResultTone.PASS };
+  }
+  return result === "PASS"
+    ? { label: "Pass", tone: criterionResultTone.PASS }
+    : { label: "Fail", tone: criterionResultTone.FAIL };
+}
+
+
 const NUMERIC_ALIASES: Record<string, CanonicalNumericField> = {
   age: "age",
   years: "age",
