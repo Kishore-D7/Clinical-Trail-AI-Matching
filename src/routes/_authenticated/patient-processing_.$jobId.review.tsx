@@ -205,7 +205,22 @@ function ReviewPage() {
       queryClient.invalidateQueries({ queryKey: ["processing-jobs"] }),
     ]);
 
+  const runImport = useServerFn(importJobPatients);
+  const importMutation = useMutation({
+    mutationFn: async (ids: string[]) =>
+      runImport({ data: ids.length > 0 ? { jobId, recordIds: ids } : { jobId } }),
+    onSuccess: async (result) => {
+      await invalidate();
+      await queryClient.invalidateQueries({ queryKey: ["patients"] });
+      toast.success(
+        `${result.imported} patient${result.imported === 1 ? "" : "s"} added, ${result.linkedExisting} updated`,
+      );
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+
   const statusMutation = useMutation({
+
     mutationFn: async ({ ids, status }: { ids: string[]; status: ProcessingRecordStatus }) => {
       const userId = status === "VERIFIED" ? await currentUserId() : null;
       const { error } = await supabase
