@@ -89,6 +89,254 @@ export type Database = {
             foreignKeyName: "documents_patient_id_fkey"
             columns: ["patient_id"]
             isOneToOne: false
+            referencedRelation: "patient_list_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      patient_conditions: {
+        Row: {
+          created_at: string
+          diagnosed_on: string | null
+          id: string
+          name: string
+          notes: string | null
+          patient_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          diagnosed_on?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          patient_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          diagnosed_on?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          patient_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "patient_conditions_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patient_list_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "patient_conditions_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      patient_documents: {
+        Row: {
+          created_at: string
+          doc_type: string | null
+          file_name: string
+          id: string
+          page_count: number | null
+          patient_id: string
+          storage_path: string | null
+          updated_at: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          doc_type?: string | null
+          file_name: string
+          id?: string
+          page_count?: number | null
+          patient_id: string
+          storage_path?: string | null
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          doc_type?: string | null
+          file_name?: string
+          id?: string
+          page_count?: number | null
+          patient_id?: string
+          storage_path?: string | null
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "patient_documents_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patient_list_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "patient_documents_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      patient_measurements: {
+        Row: {
+          confidence: number | null
+          created_at: string
+          created_by: string | null
+          id: string
+          measured_on: string | null
+          metric: Database["public"]["Enums"]["measurement_metric"]
+          notes: string | null
+          original_value: number | null
+          patient_id: string
+          source: Database["public"]["Enums"]["extraction_source"]
+          source_document_id: string | null
+          source_page: number | null
+          unit: string
+          updated_at: string
+          value: number
+          verification_status: Database["public"]["Enums"]["verification_status"]
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          confidence?: number | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          measured_on?: string | null
+          metric: Database["public"]["Enums"]["measurement_metric"]
+          notes?: string | null
+          original_value?: number | null
+          patient_id: string
+          source?: Database["public"]["Enums"]["extraction_source"]
+          source_document_id?: string | null
+          source_page?: number | null
+          unit?: string
+          updated_at?: string
+          value: number
+          verification_status?: Database["public"]["Enums"]["verification_status"]
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          confidence?: number | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          measured_on?: string | null
+          metric?: Database["public"]["Enums"]["measurement_metric"]
+          notes?: string | null
+          original_value?: number | null
+          patient_id?: string
+          source?: Database["public"]["Enums"]["extraction_source"]
+          source_document_id?: string | null
+          source_page?: number | null
+          unit?: string
+          updated_at?: string
+          value?: number
+          verification_status?: Database["public"]["Enums"]["verification_status"]
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "patient_measurements_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patient_list_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "patient_measurements_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "patient_measurements_source_document_id_fkey"
+            columns: ["source_document_id"]
+            isOneToOne: false
+            referencedRelation: "patient_documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      patient_medications: {
+        Row: {
+          created_at: string
+          dosage: string | null
+          ended_on: string | null
+          frequency: string | null
+          id: string
+          name: string
+          notes: string | null
+          patient_id: string
+          started_on: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          dosage?: string | null
+          ended_on?: string | null
+          frequency?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          patient_id: string
+          started_on?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          dosage?: string | null
+          ended_on?: string | null
+          frequency?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          patient_id?: string
+          started_on?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "patient_medications_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patient_list_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "patient_medications_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
             referencedRelation: "patients"
             referencedColumns: ["id"]
           },
@@ -99,6 +347,8 @@ export type Database = {
           age: number | null
           created_at: string
           created_by: string | null
+          date_of_birth: string | null
+          full_name: string | null
           id: string
           patient_code: string
           primary_condition: string | null
@@ -110,6 +360,8 @@ export type Database = {
           age?: number | null
           created_at?: string
           created_by?: string | null
+          date_of_birth?: string | null
+          full_name?: string | null
           id?: string
           patient_code: string
           primary_condition?: string | null
@@ -121,6 +373,8 @@ export type Database = {
           age?: number | null
           created_at?: string
           created_by?: string | null
+          date_of_birth?: string | null
+          full_name?: string | null
           id?: string
           patient_code?: string
           primary_condition?: string | null
@@ -196,6 +450,13 @@ export type Database = {
             foreignKeyName: "trial_matches_patient_id_fkey"
             columns: ["patient_id"]
             isOneToOne: false
+            referencedRelation: "patient_list_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trial_matches_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
             referencedRelation: "patients"
             referencedColumns: ["id"]
           },
@@ -231,7 +492,26 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      patient_list_view: {
+        Row: {
+          age: number | null
+          bmi: number | null
+          conditions_text: string | null
+          created_at: string | null
+          date_of_birth: string | null
+          egfr: number | null
+          full_name: string | null
+          hba1c: number | null
+          id: string | null
+          patient_code: string | null
+          primary_condition: string | null
+          sex: string | null
+          status: string | null
+          updated_at: string | null
+          verification_status: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       can_manage: { Args: { _user_id: string }; Returns: boolean }
@@ -245,6 +525,16 @@ export type Database = {
     }
     Enums: {
       app_role: "RESEARCHER" | "CLINICAL_COORDINATOR" | "ADMIN"
+      extraction_source: "AI" | "MANUAL"
+      measurement_metric:
+        | "HBA1C"
+        | "BMI"
+        | "FASTING_GLUCOSE"
+        | "SYSTOLIC_BP"
+        | "DIASTOLIC_BP"
+        | "LDL"
+        | "EGFR"
+      verification_status: "UNVERIFIED" | "VERIFIED" | "CORRECTED"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -373,6 +663,17 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["RESEARCHER", "CLINICAL_COORDINATOR", "ADMIN"],
+      extraction_source: ["AI", "MANUAL"],
+      measurement_metric: [
+        "HBA1C",
+        "BMI",
+        "FASTING_GLUCOSE",
+        "SYSTOLIC_BP",
+        "DIASTOLIC_BP",
+        "LDL",
+        "EGFR",
+      ],
+      verification_status: ["UNVERIFIED", "VERIFIED", "CORRECTED"],
     },
   },
 } as const
