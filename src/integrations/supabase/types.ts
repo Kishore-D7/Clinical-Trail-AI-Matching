@@ -68,6 +68,69 @@ export type Database = {
         }
         Relationships: []
       }
+      criterion_results: {
+        Row: {
+          actual_value: string | null
+          created_at: string
+          criterion_id: string | null
+          criterion_type: Database["public"]["Enums"]["criterion_type"]
+          expected_value: string
+          field: string
+          id: string
+          match_id: string
+          operator: string
+          reason: string | null
+          required: boolean
+          result: Database["public"]["Enums"]["criterion_result"]
+          unit: string | null
+        }
+        Insert: {
+          actual_value?: string | null
+          created_at?: string
+          criterion_id?: string | null
+          criterion_type: Database["public"]["Enums"]["criterion_type"]
+          expected_value: string
+          field: string
+          id?: string
+          match_id: string
+          operator: string
+          reason?: string | null
+          required?: boolean
+          result: Database["public"]["Enums"]["criterion_result"]
+          unit?: string | null
+        }
+        Update: {
+          actual_value?: string | null
+          created_at?: string
+          criterion_id?: string | null
+          criterion_type?: Database["public"]["Enums"]["criterion_type"]
+          expected_value?: string
+          field?: string
+          id?: string
+          match_id?: string
+          operator?: string
+          reason?: string | null
+          required?: boolean
+          result?: Database["public"]["Enums"]["criterion_result"]
+          unit?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "criterion_results_criterion_id_fkey"
+            columns: ["criterion_id"]
+            isOneToOne: false
+            referencedRelation: "trial_criteria"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "criterion_results_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "trial_matches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       documents: {
         Row: {
           created_at: string
@@ -881,31 +944,49 @@ export type Database = {
       trial_matches: {
         Row: {
           created_at: string
+          criteria_failed: number
+          criteria_passed: number
+          criteria_total: number
+          criteria_unknown: number
           id: string
+          matched_at: string
           needs_review: boolean
           patient_id: string
           score: number | null
           status: string
+          summary: string | null
           trial_id: string
           updated_at: string
         }
         Insert: {
           created_at?: string
+          criteria_failed?: number
+          criteria_passed?: number
+          criteria_total?: number
+          criteria_unknown?: number
           id?: string
+          matched_at?: string
           needs_review?: boolean
           patient_id: string
           score?: number | null
           status?: string
+          summary?: string | null
           trial_id: string
           updated_at?: string
         }
         Update: {
           created_at?: string
+          criteria_failed?: number
+          criteria_passed?: number
+          criteria_total?: number
+          criteria_unknown?: number
           id?: string
+          matched_at?: string
           needs_review?: boolean
           patient_id?: string
           score?: number | null
           status?: string
+          summary?: string | null
           trial_id?: string
           updated_at?: string
         }
@@ -989,6 +1070,7 @@ export type Database = {
         | "FAILED"
         | "CONFIRMED"
         | "DISCARDED"
+      criterion_result: "PASS" | "FAIL" | "UNKNOWN"
       criterion_type: "INCLUSION" | "EXCLUSION"
       extraction_run_status: "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED"
       extraction_source: "AI" | "MANUAL"
@@ -1159,6 +1241,7 @@ export const Constants = {
         "CONFIRMED",
         "DISCARDED",
       ],
+      criterion_result: ["PASS", "FAIL", "UNKNOWN"],
       criterion_type: ["INCLUSION", "EXCLUSION"],
       extraction_run_status: ["PENDING", "PROCESSING", "COMPLETED", "FAILED"],
       extraction_source: ["AI", "MANUAL"],
