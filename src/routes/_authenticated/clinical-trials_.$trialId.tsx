@@ -407,7 +407,72 @@ function TrialDetailPage() {
               )}
             </CardContent>
           </Card>
+
+          <Card className="mt-4">
+            <CardHeader>
+              <CardTitle className="text-base">AI extraction history</CardTitle>
+              <CardDescription>
+                Audit trail of AI criteria extractions for this trial.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="px-0 sm:px-6">
+              {extractionsQuery.isLoading ? (
+                <Skeleton className="mx-4 h-20 sm:mx-0" />
+              ) : extractionsQuery.isError ? (
+                <ErrorState
+                  className="mx-4 sm:mx-0"
+                  message={(extractionsQuery.error as Error).message}
+                  onRetry={() => extractionsQuery.refetch()}
+                />
+              ) : (extractionsQuery.data ?? []).length === 0 ? (
+                <EmptyBlock
+                  icon={Sparkles}
+                  title="No extractions yet"
+                  description="Use AI Extract Criteria to turn pasted text or a document into structured criteria."
+                />
+              ) : (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Source</TableHead>
+                        <TableHead>Provider</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Criteria</TableHead>
+                        <TableHead>Extracted</TableHead>
+                        <TableHead>Confirmed</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {(extractionsQuery.data ?? []).map((run) => (
+                        <TableRow key={run.id}>
+                          <TableCell className="font-medium">
+                            {run.source_name ?? (run.source_type === "FILE" ? "Document" : "Pasted text")}
+                          </TableCell>
+                          <TableCell className="text-muted-foreground">
+                            {run.provider ?? "—"}
+                            {run.is_mock ? " (mock)" : ""}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline">{humanize(run.status)}</Badge>
+                          </TableCell>
+                          <TableCell>{formatNumber(run.criteria_count)}</TableCell>
+                          <TableCell className="text-muted-foreground">
+                            {formatDateTime(run.created_at)}
+                          </TableCell>
+                          <TableCell className="text-muted-foreground">
+                            {run.confirmed_at ? formatDateTime(run.confirmed_at) : "—"}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </TabsContent>
+
 
         <TabsContent value="patients" className="mt-4">
           <Card>
