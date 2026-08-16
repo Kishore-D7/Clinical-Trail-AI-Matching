@@ -349,3 +349,15 @@ export const retryFailedRecords = createServerFn({ method: "POST" })
     });
     return { retried: rows.length };
   });
+
+/** Promote reviewed extraction records into the patient registry. */
+export const importJobPatients = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { jobId: string; recordIds?: string[] }) => {
+    if (!input?.jobId) throw new Error("A job is required");
+    return { jobId: input.jobId, recordIds: input.recordIds?.slice(0, 5000) ?? [] };
+  })
+  .handler(async ({ data, context }) => {
+    const { importJobRecords } = await import("@/lib/processing/import.server");
+    return importJobRecords(context.supabase, data.jobId, context.userId, data.recordIds);
+  });
