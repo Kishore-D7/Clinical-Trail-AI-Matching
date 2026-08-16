@@ -469,6 +469,255 @@ export type Database = {
         }
         Relationships: []
       }
+      processing_jobs: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          created_by: string | null
+          duplicates_flagged: number
+          error_message: string | null
+          file_name: string
+          file_size: number
+          id: string
+          is_mock: boolean
+          model: string | null
+          patients_failed: number
+          patients_needs_review: number
+          patients_processed: number
+          patients_successful: number
+          provider: string | null
+          started_at: string | null
+          status: Database["public"]["Enums"]["processing_job_status"]
+          storage_path: string | null
+          total_pages: number
+          total_patients_detected: number
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          duplicates_flagged?: number
+          error_message?: string | null
+          file_name: string
+          file_size?: number
+          id?: string
+          is_mock?: boolean
+          model?: string | null
+          patients_failed?: number
+          patients_needs_review?: number
+          patients_processed?: number
+          patients_successful?: number
+          provider?: string | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["processing_job_status"]
+          storage_path?: string | null
+          total_pages?: number
+          total_patients_detected?: number
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          duplicates_flagged?: number
+          error_message?: string | null
+          file_name?: string
+          file_size?: number
+          id?: string
+          is_mock?: boolean
+          model?: string | null
+          patients_failed?: number
+          patients_needs_review?: number
+          patients_processed?: number
+          patients_successful?: number
+          provider?: string | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["processing_job_status"]
+          storage_path?: string | null
+          total_pages?: number
+          total_patients_detected?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      processing_patient_records: {
+        Row: {
+          age: number | null
+          conditions: string[]
+          confidence: number | null
+          created_at: string
+          date_of_birth: string | null
+          duplicate_of: string | null
+          duplicate_reason: string | null
+          error_message: string | null
+          fields: Json
+          full_name: string | null
+          id: string
+          is_mock: boolean
+          is_possible_duplicate: boolean
+          job_id: string
+          medications: string[]
+          model: string | null
+          page_end: number | null
+          page_start: number | null
+          patient_identifier: string | null
+          provider: string | null
+          raw_response: Json | null
+          record_index: number
+          segment_id: string | null
+          sex: string | null
+          source_text: string | null
+          status: Database["public"]["Enums"]["processing_record_status"]
+          updated_at: string
+          validation_issues: string[]
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          age?: number | null
+          conditions?: string[]
+          confidence?: number | null
+          created_at?: string
+          date_of_birth?: string | null
+          duplicate_of?: string | null
+          duplicate_reason?: string | null
+          error_message?: string | null
+          fields?: Json
+          full_name?: string | null
+          id?: string
+          is_mock?: boolean
+          is_possible_duplicate?: boolean
+          job_id: string
+          medications?: string[]
+          model?: string | null
+          page_end?: number | null
+          page_start?: number | null
+          patient_identifier?: string | null
+          provider?: string | null
+          raw_response?: Json | null
+          record_index?: number
+          segment_id?: string | null
+          sex?: string | null
+          source_text?: string | null
+          status?: Database["public"]["Enums"]["processing_record_status"]
+          updated_at?: string
+          validation_issues?: string[]
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          age?: number | null
+          conditions?: string[]
+          confidence?: number | null
+          created_at?: string
+          date_of_birth?: string | null
+          duplicate_of?: string | null
+          duplicate_reason?: string | null
+          error_message?: string | null
+          fields?: Json
+          full_name?: string | null
+          id?: string
+          is_mock?: boolean
+          is_possible_duplicate?: boolean
+          job_id?: string
+          medications?: string[]
+          model?: string | null
+          page_end?: number | null
+          page_start?: number | null
+          patient_identifier?: string | null
+          provider?: string | null
+          raw_response?: Json | null
+          record_index?: number
+          segment_id?: string | null
+          sex?: string | null
+          source_text?: string | null
+          status?: Database["public"]["Enums"]["processing_record_status"]
+          updated_at?: string
+          validation_issues?: string[]
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "processing_patient_records_duplicate_of_fkey"
+            columns: ["duplicate_of"]
+            isOneToOne: false
+            referencedRelation: "processing_patient_records"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "processing_patient_records_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "processing_jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "processing_patient_records_segment_id_fkey"
+            columns: ["segment_id"]
+            isOneToOne: false
+            referencedRelation: "processing_segments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      processing_segments: {
+        Row: {
+          attempts: number
+          chunk_index: number
+          content: string
+          created_at: string
+          error_message: string | null
+          id: string
+          job_id: string
+          page_end: number | null
+          page_start: number | null
+          segment_index: number
+          status: Database["public"]["Enums"]["processing_segment_status"]
+          strategy: string
+          updated_at: string
+        }
+        Insert: {
+          attempts?: number
+          chunk_index?: number
+          content: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          job_id: string
+          page_end?: number | null
+          page_start?: number | null
+          segment_index: number
+          status?: Database["public"]["Enums"]["processing_segment_status"]
+          strategy?: string
+          updated_at?: string
+        }
+        Update: {
+          attempts?: number
+          chunk_index?: number
+          content?: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          job_id?: string
+          page_end?: number | null
+          page_start?: number | null
+          segment_index?: number
+          status?: Database["public"]["Enums"]["processing_segment_status"]
+          strategy?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "processing_segments_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "processing_jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -751,6 +1000,19 @@ export type Database = {
         | "DIASTOLIC_BP"
         | "LDL"
         | "EGFR"
+      processing_job_status:
+        | "UPLOADED"
+        | "QUEUED"
+        | "PROCESSING"
+        | "COMPLETED"
+        | "PARTIALLY_COMPLETED"
+        | "FAILED"
+      processing_record_status:
+        | "EXTRACTED"
+        | "NEEDS_REVIEW"
+        | "FAILED"
+        | "VERIFIED"
+      processing_segment_status: "PENDING" | "PROCESSING" | "DONE" | "FAILED"
       trial_status:
         | "DRAFT"
         | "RECRUITING"
@@ -907,6 +1169,21 @@ export const Constants = {
         "LDL",
         "EGFR",
       ],
+      processing_job_status: [
+        "UPLOADED",
+        "QUEUED",
+        "PROCESSING",
+        "COMPLETED",
+        "PARTIALLY_COMPLETED",
+        "FAILED",
+      ],
+      processing_record_status: [
+        "EXTRACTED",
+        "NEEDS_REVIEW",
+        "FAILED",
+        "VERIFIED",
+      ],
+      processing_segment_status: ["PENDING", "PROCESSING", "DONE", "FAILED"],
       trial_status: [
         "DRAFT",
         "RECRUITING",
