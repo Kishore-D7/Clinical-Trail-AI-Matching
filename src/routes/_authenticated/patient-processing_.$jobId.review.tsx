@@ -237,7 +237,7 @@ function ReviewPage() {
       record: ProcessingRecordRow;
       key: MeasurementFieldKey;
       next: ExtractedFieldValue["verificationStatus"];
-      correction?: { value: number | null; unit: string | null };
+      correction?: { value: number | null; unit: string | null } | undefined;
     }) => {
       const fields: ExtractedFields = { ...asExtractedFields(record.fields) };
       const existing = fields[key] ?? {
