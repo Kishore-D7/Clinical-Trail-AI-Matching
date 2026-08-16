@@ -443,6 +443,20 @@ function ReviewPage() {
             <div className="ml-auto flex flex-wrap gap-2">
               <Button
                 size="sm"
+                variant="secondary"
+                disabled={!canManage || importMutation.isPending}
+                onClick={() => importMutation.mutate(selectedIds)}
+              >
+                {importMutation.isPending ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <UserPlus className="size-4" />
+                )}
+                {selectedIds.length > 0 ? "Import selected to registry" : "Import all to registry"}
+              </Button>
+
+              <Button
+                size="sm"
                 disabled={!canManage || busy || selectedIds.length === 0}
                 onClick={() => statusMutation.mutate({ ids: selectedIds, status: "VERIFIED" })}
               >
