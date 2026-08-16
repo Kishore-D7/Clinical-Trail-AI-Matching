@@ -201,7 +201,10 @@ export const processJobBatch = createServerFn({ method: "POST" })
               identifier: validated.identifier,
               name: validated.name,
               dateOfBirth: validated.dateOfBirth,
+              age: validated.age,
+              sex: validated.sex,
             },
+
             candidate,
           );
           if (reason) {
