@@ -120,7 +120,7 @@ const headerStrategy: SegmentationStrategy = {
           index: index++,
           chunkIndex: chunk.chunkIndex,
           pageStart: pageOfOffset(chunk.text, start, chunk.pageStart),
-          pageEnd: pageOfOffset(chunk.text, end, chunk.pageEnd),
+          pageEnd: pageOfOffset(chunk.text, Math.max(start, end - 1), chunk.pageEnd),
           content,
           strategy: headerStrategy.name,
         });
