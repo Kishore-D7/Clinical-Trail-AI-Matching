@@ -130,6 +130,117 @@ const headerStrategy: SegmentationStrategy = {
   },
 };
 
+/**
+ * Identifier strategy: for narrative/unstructured documents where patients are
+ * introduced inside prose ("Patient record P-3001 concerns ...", "MRN-3003 refers to ...").
+ * A new segment starts when a paragraph mentions a patient identifier that is
+ * different from the current one; paragraphs without an identifier are treated
+ * as continuations of the current patient.
+ */
+const IDENTIFIER_PATTERNS = [
+  /\b(?:patient\s*(?:id|no\.?|number|identifier)|mrn|subject\s*id|participant\s*id)\s*[:#-]?\s*([A-Z]{0,4}[-_]?[A-Z0-9]{2,}[-_]?[A-Z0-9]+)\b/gi,
+  /\b((?:P|PT|MRN|SUBJ|PID)[-_]\s?[A-Z0-9]{2,}(?:[-_][A-Z0-9]+)*)\b/g,
+];
+
+function identifiersIn(text: string): string[] {
+  const found = new Set<string>();
+  for (const pattern of IDENTIFIER_PATTERNS) {
+    pattern.lastIndex = 0;
+    let match: RegExpExecArray | null;
+    while ((match = pattern.exec(text)) !== null) {
+      const value = (match[1] ?? "").replace(/\s+/g, "").toUpperCase();
+      if (value.length >= 3 && /\d/.test(value)) found.add(value);
+    }
+  }
+  return [...found];
+}
+
+const identifierStrategy: SegmentationStrategy = {
+  name: "narrative-identifiers-v1",
+  detect: (pages) => {
+    const text = pages
+      .slice(0, 6)
+      .map((p) => p.text)
+      .join("\n");
+    const distinct = identifiersIn(text).length;
+    if (distinct < 2) return 0;
+    return Math.min(1, 0.5 + distinct / 20);
+  },
+  segment: (pages, config) => {
+    const segments: PatientSegment[] = [];
+    const seenIds = new Set<string>();
+    const emitted = new Set<string>();
+    let index = 0;
+
+    // A "block" is a paragraph. Extracted PDF text often has no blank lines, so
+    // blocks also break on short heading-like lines ("Patient Narrative 7").
+    const isHeading = (line: string) => {
+      const value = line.trim();
+      if (!value || value.length > 80) return false;
+      if (/^(patient|case|record|subject|participant|narrative)\b[^.]{0,60}\d+$/i.test(value)) {
+        return true;
+      }
+      return /^[A-Z][A-Za-z][A-Za-z \-—]{2,60}$/.test(value);
+    };
+
+    for (const chunk of chunkPages(pages, config)) {
+      const blocks: { text: string; offset: number }[] = [];
+      let offset = 0;
+      for (const line of chunk.text.split("\n")) {
+        const last = blocks[blocks.length - 1];
+        if (!last || isHeading(line) || !line.trim()) {
+          blocks.push({ text: line, offset });
+        } else {
+          last.text += `\n${line}`;
+        }
+        offset += line.length + 1;
+      }
+
+      type Group = { start: number; end: number; ids: Set<string>; text: string };
+      const groups: Group[] = [];
+      for (const block of blocks) {
+        if (!block.text.trim()) continue;
+        const ids = identifiersIn(block.text);
+        const current = groups[groups.length - 1];
+        // Only an identifier that has never appeared before starts a new patient;
+        // back-references ("possible duplicate of P-3001") stay with the current record.
+        const introduces = ids.filter((id) => !seenIds.has(id));
+        if (introduces.length > 0 || !current) {
+          if (introduces.length === 0) continue; // leading admin text, no patient yet
+          introduces.forEach((id) => seenIds.add(id));
+          groups.push({
+            start: block.offset,
+            end: block.offset + block.text.length,
+            ids: new Set(introduces),
+            text: block.text,
+          });
+        } else {
+          current.end = block.offset + block.text.length;
+          current.text += `\n${block.text}`;
+        }
+      }
+
+      for (const group of groups) {
+        const content = cleanSegment(group.text, config.maxSegmentChars);
+        if (content.length < 40) continue;
+        const key = [...group.ids].sort().join("|");
+        if (emitted.has(key)) continue;
+        emitted.add(key);
+        segments.push({
+          index: index++,
+          chunkIndex: chunk.chunkIndex,
+          pageStart: pageOfOffset(chunk.text, group.start, chunk.pageStart),
+          pageEnd: pageOfOffset(chunk.text, Math.max(group.start, group.end - 1), chunk.pageEnd),
+          content,
+          strategy: identifierStrategy.name,
+        });
+      }
+    }
+    return segments;
+  },
+};
+
+
 /** Fallback: treat each chunk as one segment when no patient headers are found. */
 const chunkStrategy: SegmentationStrategy = {
   name: "chunk-fallback-v1",
@@ -147,7 +258,8 @@ const chunkStrategy: SegmentationStrategy = {
       .filter((segment) => segment.content.length >= 40),
 };
 
-const STRATEGIES: SegmentationStrategy[] = [headerStrategy, chunkStrategy];
+const STRATEGIES: SegmentationStrategy[] = [headerStrategy, identifierStrategy, chunkStrategy];
+
 
 export const PatientSegmentationService = {
   strategies: STRATEGIES,

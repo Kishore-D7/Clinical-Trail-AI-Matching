@@ -159,7 +159,7 @@ export const processJobBatch = createServerFn({ method: "POST" })
 
     const { data: existing } = await supabase
       .from("processing_patient_records")
-      .select("id, patient_identifier, full_name, date_of_birth")
+      .select("id, patient_identifier, full_name, date_of_birth, age, sex")
       .eq("job_id", data.jobId)
       .limit(5000);
     const known = (existing ?? []).map((row) => ({
@@ -167,7 +167,10 @@ export const processJobBatch = createServerFn({ method: "POST" })
       identifier: row.patient_identifier,
       name: row.full_name,
       dateOfBirth: row.date_of_birth,
+      age: row.age,
+      sex: row.sex,
     }));
+
 
     let processedNow = 0;
     let provider: string | null = null;
@@ -198,7 +201,10 @@ export const processJobBatch = createServerFn({ method: "POST" })
               identifier: validated.identifier,
               name: validated.name,
               dateOfBirth: validated.dateOfBirth,
+              age: validated.age,
+              sex: validated.sex,
             },
+
             candidate,
           );
           if (reason) {
@@ -247,7 +253,10 @@ export const processJobBatch = createServerFn({ method: "POST" })
           identifier: validated.identifier,
           name: validated.name,
           dateOfBirth: validated.dateOfBirth,
+          age: validated.age,
+          sex: validated.sex,
         });
+
 
         await supabase
           .from("processing_segments")

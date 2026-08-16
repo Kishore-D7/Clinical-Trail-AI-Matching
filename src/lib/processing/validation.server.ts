@@ -91,10 +91,22 @@ export const PatientValidationService = {
 
   /** Duplicate detection — flags only, never deletes. */
   duplicateReason(
-    candidate: { identifier: string | null; name: string | null; dateOfBirth: string | null },
-    existing: { identifier: string | null; name: string | null; dateOfBirth: string | null },
+    candidate: {
+      identifier: string | null;
+      name: string | null;
+      dateOfBirth: string | null;
+      age?: number | null;
+      sex?: string | null;
+    },
+    existing: {
+      identifier: string | null;
+      name: string | null;
+      dateOfBirth: string | null;
+      age?: number | null;
+      sex?: string | null;
+    },
   ): string | null {
-    const norm = (v: string | null) => v?.trim().toLowerCase() ?? null;
+    const norm = (v: string | null | undefined) => v?.trim().toLowerCase() ?? null;
     if (candidate.identifier && norm(candidate.identifier) === norm(existing.identifier)) {
       return "Same patient identifier";
     }
@@ -106,6 +118,16 @@ export const PatientValidationService = {
     ) {
       return "Same name and date of birth";
     }
+    // Weaker signal: identical date of birth plus matching demographics.
+    if (
+      candidate.dateOfBirth &&
+      candidate.dateOfBirth === existing.dateOfBirth &&
+      norm(candidate.sex) === norm(existing.sex) &&
+      (candidate.age ?? null) === (existing.age ?? null)
+    ) {
+      return "Same date of birth, sex and age";
+    }
     return null;
   },
 };
+
