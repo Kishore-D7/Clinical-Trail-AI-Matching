@@ -501,7 +501,13 @@ function JobPanel({
             >
               <RefreshCw className="size-4" /> Retry failed ({failedCount})
             </Button>
+            <Button asChild size="sm" variant="outline">
+              <Link to="/patient-processing/$jobId/review" params={{ jobId: job.id }}>
+                <ClipboardCheck className="size-4" /> Review extractions
+              </Link>
+            </Button>
             <Button size="sm" variant="outline" onClick={onExport}>
+
               <Download className="size-4" /> Export CSV
             </Button>
           </div>
