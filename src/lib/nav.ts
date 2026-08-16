@@ -46,10 +46,10 @@ export const navItems: NavItem[] = [
     description: "Trial catalogue with protocol and recruitment status.",
   },
   {
-    title: "AI Matching",
+    title: "Matching Engine",
     url: "/ai-matching",
     icon: Sparkles,
-    description: "Eligibility matching engine (coming in a later phase).",
+    description: "Deterministic rule-based patient-to-trial eligibility engine.",
   },
   {
     title: "Matching Results",
