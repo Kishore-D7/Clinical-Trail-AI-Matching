@@ -249,9 +249,17 @@ function TrialDetailPage() {
             {trial.trial_code} · {phaseLabel(trial.phase)} · {trial.sponsor ?? "No sponsor"}
           </p>
         </div>
-        <Button disabled={!canManage} onClick={() => setEditOpen(true)}>
-          <Pencil className="size-4" /> Edit trial
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button asChild variant="outline">
+            <Link to="/trial-candidates/$trialId" params={{ trialId }}>
+              <Users className="size-4" /> Find potential patients
+            </Link>
+          </Button>
+          <Button disabled={!canManage} onClick={() => setEditOpen(true)}>
+            <Pencil className="size-4" /> Edit trial
+          </Button>
+        </div>
+
       </div>
 
       <Tabs defaultValue="overview">
