@@ -1012,6 +1012,8 @@ export type Database = {
         | "NEEDS_REVIEW"
         | "FAILED"
         | "VERIFIED"
+        | "CORRECTED"
+        | "REJECTED"
       processing_segment_status: "PENDING" | "PROCESSING" | "DONE" | "FAILED"
       trial_status:
         | "DRAFT"
@@ -1182,6 +1184,8 @@ export const Constants = {
         "NEEDS_REVIEW",
         "FAILED",
         "VERIFIED",
+        "CORRECTED",
+        "REJECTED",
       ],
       processing_segment_status: ["PENDING", "PROCESSING", "DONE", "FAILED"],
       trial_status: [
