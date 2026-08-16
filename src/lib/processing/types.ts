@@ -52,12 +52,33 @@ export const MEASUREMENT_FIELDS = [
   "egfr",
 ] as const;
 
+export type MeasurementFieldKey = (typeof MEASUREMENT_FIELDS)[number];
+
+export const MEASUREMENT_FIELD_META: Record<
+  MeasurementFieldKey,
+  { label: string; unit: string }
+> = {
+  hba1c: { label: "HbA1c", unit: "%" },
+  bmi: { label: "BMI", unit: "kg/m²" },
+  fastingGlucose: { label: "Fasting Glucose", unit: "mg/dL" },
+  systolic: { label: "Systolic BP", unit: "mmHg" },
+  diastolic: { label: "Diastolic BP", unit: "mmHg" },
+  ldl: { label: "LDL", unit: "mg/dL" },
+  egfr: { label: "eGFR", unit: "mL/min/1.73m²" },
+};
+
+/** Default confidence below which a field is highlighted for review. */
+export const DEFAULT_CONFIDENCE_THRESHOLD = 0.8;
+
 export const recordStatusTone: Record<ProcessingRecordStatus, string> = {
   EXTRACTED: "border-sky-500/40 bg-sky-500/10 text-sky-700 dark:text-sky-300",
   NEEDS_REVIEW: "border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-300",
   FAILED: "border-destructive/40 bg-destructive/10 text-destructive",
   VERIFIED: "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
+  CORRECTED: "border-violet-500/40 bg-violet-500/10 text-violet-700 dark:text-violet-300",
+  REJECTED: "border-muted-foreground/30 bg-muted text-muted-foreground line-through",
 };
+
 
 export const jobStatusTone: Record<ProcessingJobStatus, string> = {
   UPLOADED: "border-muted-foreground/30 bg-muted text-muted-foreground",
