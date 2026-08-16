@@ -1,0 +1,4 @@
+CREATE POLICY "Managers read patient documents" ON storage.objects FOR SELECT TO authenticated USING (bucket_id = 'patient-documents' AND private.can_manage(auth.uid()));
+CREATE POLICY "Managers upload patient documents" ON storage.objects FOR INSERT TO authenticated WITH CHECK (bucket_id = 'patient-documents' AND private.can_manage(auth.uid()));
+CREATE POLICY "Managers update patient documents" ON storage.objects FOR UPDATE TO authenticated USING (bucket_id = 'patient-documents' AND private.can_manage(auth.uid())) WITH CHECK (bucket_id = 'patient-documents' AND private.can_manage(auth.uid()));
+CREATE POLICY "Managers delete patient documents" ON storage.objects FOR DELETE TO authenticated USING (bucket_id = 'patient-documents' AND private.can_manage(auth.uid()));
