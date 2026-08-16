@@ -543,7 +543,7 @@ function RecordCard({
   onField: (
     key: MeasurementFieldKey,
     next: ExtractedFieldValue["verificationStatus"],
-    correction?: { value: number | null; unit: string | null },
+    correction?: { value: number | null; unit: string | null } | undefined,
   ) => void;
 }) {
   const entries = fieldEntries(record);
@@ -690,7 +690,7 @@ function FieldRow({
   onField: (
     key: MeasurementFieldKey,
     next: ExtractedFieldValue["verificationStatus"],
-    correction?: { value: number | null; unit: string | null },
+    correction?: { value: number | null; unit: string | null } | undefined,
   ) => void;
 }) {
   const [editing, setEditing] = useState(false);
