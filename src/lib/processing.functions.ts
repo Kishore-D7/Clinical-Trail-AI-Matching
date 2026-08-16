@@ -250,7 +250,10 @@ export const processJobBatch = createServerFn({ method: "POST" })
           identifier: validated.identifier,
           name: validated.name,
           dateOfBirth: validated.dateOfBirth,
+          age: validated.age,
+          sex: validated.sex,
         });
+
 
         await supabase
           .from("processing_segments")
