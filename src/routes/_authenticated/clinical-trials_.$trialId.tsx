@@ -7,12 +7,14 @@ import {
   ListChecks,
   Pencil,
   Plus,
+  Sparkles,
   Trash2,
   Users,
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { AiExtractCriteriaDialog } from "@/components/trials/ai-extract-dialog";
 import { CriterionDialog } from "@/components/trials/criterion-dialog";
 import { TrialFormDialog } from "@/components/trials/trial-form-dialog";
 import {
@@ -82,6 +84,7 @@ function TrialDetailPage() {
 
   const [editOpen, setEditOpen] = useState(false);
   const [criterionOpen, setCriterionOpen] = useState(false);
+  const [aiExtractOpen, setAiExtractOpen] = useState(false);
   const [editingCriterion, setEditingCriterion] = useState<CriterionRow | null>(null);
   const [pendingCriterion, setPendingCriterion] = useState<CriterionRow | null>(null);
 
@@ -125,7 +128,22 @@ function TrialDetailPage() {
     },
   });
 
+  const extractionsQuery = useQuery({
+    queryKey: ["trial-extractions", trialId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("trial_criteria_extractions")
+        .select("*")
+        .eq("trial_id", trialId)
+        .order("created_at", { ascending: false })
+        .limit(25);
+      if (error) throw new Error(error.message);
+      return data ?? [];
+    },
+  });
+
   const documentsQuery = useQuery({
+
     queryKey: ["trial-documents", trialId],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -288,17 +306,28 @@ function TrialDetailPage() {
                   {inclusion.length} inclusion · {exclusion.length} exclusion
                 </CardDescription>
               </div>
-              <Button
-                size="sm"
-                disabled={!canManage}
-                onClick={() => {
-                  setEditingCriterion(null);
-                  setCriterionOpen(true);
-                }}
-              >
-                <Plus className="size-4" /> Add criterion
-              </Button>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={!canManage}
+                  onClick={() => setAiExtractOpen(true)}
+                >
+                  <Sparkles className="size-4" /> AI Extract Criteria
+                </Button>
+                <Button
+                  size="sm"
+                  disabled={!canManage}
+                  onClick={() => {
+                    setEditingCriterion(null);
+                    setCriterionOpen(true);
+                  }}
+                >
+                  <Plus className="size-4" /> Add criterion
+                </Button>
+              </div>
             </CardHeader>
+
             <CardContent className="px-0 sm:px-6">
               {criteriaQuery.isLoading ? (
                 <div className="space-y-2 px-4 sm:px-0">
@@ -393,7 +422,72 @@ function TrialDetailPage() {
               )}
             </CardContent>
           </Card>
+
+          <Card className="mt-4">
+            <CardHeader>
+              <CardTitle className="text-base">AI extraction history</CardTitle>
+              <CardDescription>
+                Audit trail of AI criteria extractions for this trial.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="px-0 sm:px-6">
+              {extractionsQuery.isLoading ? (
+                <Skeleton className="mx-4 h-20 sm:mx-0" />
+              ) : extractionsQuery.isError ? (
+                <ErrorState
+                  className="mx-4 sm:mx-0"
+                  message={(extractionsQuery.error as Error).message}
+                  onRetry={() => extractionsQuery.refetch()}
+                />
+              ) : (extractionsQuery.data ?? []).length === 0 ? (
+                <EmptyBlock
+                  icon={Sparkles}
+                  title="No extractions yet"
+                  description="Use AI Extract Criteria to turn pasted text or a document into structured criteria."
+                />
+              ) : (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Source</TableHead>
+                        <TableHead>Provider</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Criteria</TableHead>
+                        <TableHead>Extracted</TableHead>
+                        <TableHead>Confirmed</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {(extractionsQuery.data ?? []).map((run) => (
+                        <TableRow key={run.id}>
+                          <TableCell className="font-medium">
+                            {run.source_name ?? (run.source_type === "FILE" ? "Document" : "Pasted text")}
+                          </TableCell>
+                          <TableCell className="text-muted-foreground">
+                            {run.provider ?? "—"}
+                            {run.is_mock ? " (mock)" : ""}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline">{humanize(run.status)}</Badge>
+                          </TableCell>
+                          <TableCell>{formatNumber(run.criteria_count)}</TableCell>
+                          <TableCell className="text-muted-foreground">
+                            {formatDateTime(run.created_at)}
+                          </TableCell>
+                          <TableCell className="text-muted-foreground">
+                            {run.confirmed_at ? formatDateTime(run.confirmed_at) : "—"}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </TabsContent>
+
 
         <TabsContent value="patients" className="mt-4">
           <Card>
@@ -611,6 +705,12 @@ function TrialDetailPage() {
         onOpenChange={setEditOpen}
         trial={trial}
         criteria={criteria}
+      />
+
+      <AiExtractCriteriaDialog
+        open={aiExtractOpen}
+        onOpenChange={setAiExtractOpen}
+        trialId={trialId}
       />
 
       <CriterionDialog
