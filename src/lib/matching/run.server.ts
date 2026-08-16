@@ -23,6 +23,8 @@ export type MatchBatchResult = {
   potential: number;
   needsReview: number;
   ineligible: number;
+  errors: number;
+
 };
 
 export async function loadTrialCriteria(supabase: Client, trialId: string) {
