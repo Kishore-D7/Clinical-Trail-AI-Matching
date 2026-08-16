@@ -25,11 +25,12 @@ import {
 } from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  criterionResultTone,
+  criterionOutcome,
   matchStatusLabel,
   matchStatusTone,
   type MatchStatus,
 } from "@/lib/matching/engine";
+
 import { formatDateTime, formatNumber } from "@/lib/patients";
 import { cn } from "@/lib/utils";
 
