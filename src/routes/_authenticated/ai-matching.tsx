@@ -77,7 +77,19 @@ function MatchingEnginePage() {
     },
   });
 
+  const patientCountQuery = useQuery({
+    queryKey: ["matching-patient-count"],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from("patients")
+        .select("id", { count: "exact", head: true });
+      if (error) throw new Error(error.message);
+      return count ?? 0;
+    },
+  });
+
   const criteriaQuery = useQuery({
+
     queryKey: ["matching-criteria", trialId],
     enabled: Boolean(trialId),
     queryFn: async () => {
