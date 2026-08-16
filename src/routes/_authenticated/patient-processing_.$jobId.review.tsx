@@ -44,6 +44,8 @@ import { Slider } from "@/components/ui/slider";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDateTime, humanize } from "@/lib/patients";
+import { importJobPatients } from "@/lib/processing.functions";
+
 import {
   asExtractedFields,
   DEFAULT_CONFIDENCE_THRESHOLD,
