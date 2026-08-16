@@ -35,18 +35,43 @@ export async function loadTrialCriteria(supabase: Client, trialId: string) {
   return (data ?? []) as EngineCriterion[];
 }
 
+/**
+ * Resolve the patient codes produced by a bulk-processing job so a matching run
+ * can be scoped to that cohort only.
+ */
+export async function loadJobPatientCodes(supabase: Client, jobId: string): Promise<string[]> {
+  const { data, error } = await supabase
+    .from("processing_patient_records")
+    .select("record_index, patient_identifier")
+    .eq("job_id", jobId)
+    .limit(5000);
+  if (error) throw new Error(error.message);
+  const codes = new Set<string>();
+  for (const row of data ?? []) {
+    const code = (row.patient_identifier ?? "").trim() || `EXT-${row.record_index + 1}`;
+    codes.add(code);
+  }
+  return [...codes];
+}
+
 /** Load structured facts for a page of patients using set-based queries only. */
 export async function loadPatientFacts(
   supabase: Client,
   offset: number,
   limit: number,
+  patientCodes?: string[] | null,
 ): Promise<{ facts: PatientFacts[]; total: number }> {
-  const { data, error, count } = await supabase
+  let baseQuery = supabase
     .from("patients")
     .select("id, patient_code, full_name, age, sex, primary_condition", { count: "exact" })
-    .order("patient_code", { ascending: true })
-    .range(offset, offset + limit - 1);
+    .order("patient_code", { ascending: true });
+  if (patientCodes) {
+    if (patientCodes.length === 0) return { facts: [], total: 0 };
+    baseQuery = baseQuery.in("patient_code", patientCodes);
+  }
+  const { data, error, count } = await baseQuery.range(offset, offset + limit - 1);
   if (error) throw new Error(error.message);
+
 
   const patients = data ?? [];
   const ids = patients.map((p) => p.id);
