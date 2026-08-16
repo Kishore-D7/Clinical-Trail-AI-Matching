@@ -202,16 +202,31 @@ export async function persistEvaluations(
   }
 }
 
-/** Run one deterministic matching batch for a trial. */
+/** Run one deterministic matching batch for a trial, optionally scoped to a cohort. */
 export async function runMatchBatch(
   supabase: Client,
   trialId: string,
   offset: number,
+  options?: { jobId?: string | null },
 ): Promise<MatchBatchResult> {
   const criteria = await loadTrialCriteria(supabase, trialId);
-  const { facts, total } = await loadPatientFacts(supabase, offset, PATIENTS_PER_BATCH);
+  const patientCodes = options?.jobId ? await loadJobPatientCodes(supabase, options.jobId) : null;
+  const { facts, total } = await loadPatientFacts(
+    supabase,
+    offset,
+    PATIENTS_PER_BATCH,
+    patientCodes,
+  );
 
-  const evaluations = facts.map((patient) => evaluateMatch(patient, trialId, criteria));
+  const evaluations: MatchEvaluation[] = [];
+  let errors = 0;
+  for (const patient of facts) {
+    try {
+      evaluations.push(evaluateMatch(patient, trialId, criteria));
+    } catch {
+      errors += 1;
+    }
+  }
   await persistEvaluations(supabase, evaluations);
 
   const nextOffset = offset + facts.length;
@@ -223,5 +238,7 @@ export async function runMatchBatch(
     potential: evaluations.filter((e) => e.status === "POTENTIAL_MATCH").length,
     needsReview: evaluations.filter((e) => e.status === "NEEDS_REVIEW").length,
     ineligible: evaluations.filter((e) => e.status === "INELIGIBLE").length,
+    errors,
   };
+
 }
