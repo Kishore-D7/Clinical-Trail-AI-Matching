@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
+import type { z } from "zod";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -44,14 +45,7 @@ import {
 
 export type MeasurementDialogMode = "add" | "edit" | "verify" | "correct";
 
-type Values = {
-  value: string;
-  unit: string;
-  measured_on: string;
-  source_page: string;
-  source_document_id: string;
-  notes: string;
-};
+type Values = z.infer<ReturnType<typeof measurementSchema>>;
 
 const NO_DOCUMENT = "__none__";
 
