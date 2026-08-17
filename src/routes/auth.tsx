@@ -59,15 +59,27 @@ function AuthPage() {
         if (error) throw error;
         navigate({ to: "/dashboard", replace: true });
       } else if (mode === "register") {
+        if (!role) {
+          setRoleError("Please select a role to continue.");
+          return;
+        }
+        // ADMIN is never self-granted: the account starts as Researcher and an
+        // existing administrator promotes it later.
+        const requestedRole = role === "ADMIN" ? "RESEARCHER" : role;
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
             emailRedirectTo: window.location.origin,
-            data: { full_name: fullName, organization },
+            data: { full_name: fullName, organization, requested_role: requestedRole },
           },
         });
         if (error) throw error;
+        if (role === "ADMIN") {
+          toast.info(
+            "Administrator access must be granted by an existing administrator. Your account starts as Researcher.",
+          );
+        }
         if (data.session) {
           navigate({ to: "/dashboard", replace: true });
         } else {
