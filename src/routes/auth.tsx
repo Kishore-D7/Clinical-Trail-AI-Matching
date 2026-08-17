@@ -9,10 +9,9 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
-import { RoleSelector } from "@/components/role-selector";
-import type { AppRole } from "@/lib/roles";
 
 export const Route = createFileRoute("/auth")({
+  ssr: false,
   head: () => ({
     meta: [
       { title: "Sign in — TrialBridge Clinical Trial Matching" },
@@ -31,18 +30,13 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
-type Mode = "login" | "register" | "forgot";
-
 function AuthPage() {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<Mode>("login");
+  const [mode, setMode] = useState<"login" | "register">("login");
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
-  const [organization, setOrganization] = useState("");
-  const [role, setRole] = useState<AppRole | null>(null);
-  const [roleError, setRoleError] = useState<string | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -57,43 +51,25 @@ function AuthPage() {
       if (mode === "login") {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        navigate({ to: "/dashboard", replace: true });
-      } else if (mode === "register") {
-        if (!role) {
-          setRoleError("Please select a role to continue.");
-          return;
-        }
-        // ADMIN is never self-granted: the account starts as Researcher and an
-        // existing administrator promotes it later.
-        const requestedRole = role === "ADMIN" ? "RESEARCHER" : role;
+      } else {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
             emailRedirectTo: window.location.origin,
-            data: { full_name: fullName, organization, requested_role: requestedRole },
+            data: { full_name: fullName, requested_role: "RESEARCHER" },
           },
         });
         if (error) throw error;
-        if (role === "ADMIN") {
-          toast.info(
-            "Administrator access must be granted by an existing administrator. Your account starts as Researcher.",
-          );
+        if (!data.session) {
+          const { error: signInError } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
+          if (signInError) throw signInError;
         }
-        if (data.session) {
-          navigate({ to: "/dashboard", replace: true });
-        } else {
-          toast.success("Check your email to confirm your account before signing in.");
-          setMode("login");
-        }
-      } else {
-        const { error } = await supabase.auth.resetPasswordForEmail(email, {
-          redirectTo: `${window.location.origin}/reset-password`,
-        });
-        if (error) throw error;
-        toast.success("Password reset link sent. Check your inbox.");
-        setMode("login");
       }
+      navigate({ to: "/dashboard", replace: true });
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Something went wrong");
     } finally {
@@ -142,70 +118,45 @@ function AuthPage() {
         <Card className="w-full max-w-md shadow-[var(--shadow-elevated)]">
           <CardHeader>
             <CardTitle className="text-xl">
-              {mode === "login" && "Sign in"}
-              {mode === "register" && "Create your account"}
-              {mode === "forgot" && "Reset your password"}
+              {mode === "login" ? "Sign in" : "Create your account"}
             </CardTitle>
             <CardDescription>
-              {mode === "forgot"
-                ? "We'll email you a secure link to choose a new password."
-                : "Use your work email to access the research workspace."}
+              Use your work email to access the research workspace.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-5">
-            {mode !== "forgot" && (
-              <div className="grid grid-cols-2 gap-1 rounded-md bg-muted p-1" role="tablist">
-                {(["login", "register"] as const).map((value) => (
-                  <button
-                    key={value}
-                    type="button"
-                    role="tab"
-                    aria-selected={mode === value}
-                    onClick={() => setMode(value)}
-                    className={
-                      "rounded-sm px-3 py-1.5 text-sm font-medium transition-colors " +
-                      (mode === value
-                        ? "bg-card text-foreground shadow-sm"
-                        : "text-muted-foreground hover:text-foreground")
-                    }
-                  >
-                    {value === "login" ? "Sign in" : "Register"}
-                  </button>
-                ))}
-              </div>
-            )}
+            <div className="grid grid-cols-2 gap-1 rounded-md bg-muted p-1" role="tablist">
+              {(["login", "register"] as const).map((value) => (
+                <button
+                  key={value}
+                  type="button"
+                  role="tab"
+                  aria-selected={mode === value}
+                  onClick={() => setMode(value)}
+                  className={
+                    "rounded-sm px-3 py-1.5 text-sm font-medium transition-colors " +
+                    (mode === value
+                      ? "bg-card text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground")
+                  }
+                >
+                  {value === "login" ? "Sign in" : "Register"}
+                </button>
+              ))}
+            </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               {mode === "register" && (
-                <>
-                  <div className="space-y-2">
-                    <Label htmlFor="fullName">Full name</Label>
-                    <Input
-                      id="fullName"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      placeholder="Dr. Alex Moreau"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="organization">Organization</Label>
-                    <Input
-                      id="organization"
-                      value={organization}
-                      onChange={(e) => setOrganization(e.target.value)}
-                      placeholder="Northside Research Institute"
-                    />
-                  </div>
-                  <RoleSelector
-                    value={role}
-                    onChange={(next) => {
-                      setRole(next);
-                      setRoleError(null);
-                    }}
-                    error={roleError}
+                <div className="space-y-2">
+                  <Label htmlFor="fullName">Full name</Label>
+                  <Input
+                    id="fullName"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder="Dr. Alex Moreau"
+                    required
                   />
-                </>
+                </div>
               )}
 
               <div className="space-y-2">
@@ -221,66 +172,39 @@ function AuthPage() {
                 />
               </div>
 
-              {mode !== "forgot" && (
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="password">Password</Label>
-                    {mode === "login" && (
-                      <button
-                        type="button"
-                        onClick={() => setMode("forgot")}
-                        className="text-xs text-primary underline-offset-4 hover:underline"
-                      >
-                        Forgot password?
-                      </button>
-                    )}
-                  </div>
-                  <Input
-                    id="password"
-                    type="password"
-                    autoComplete={mode === "login" ? "current-password" : "new-password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    minLength={6}
-                    required
-                  />
-                </div>
-              )}
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  autoComplete={mode === "login" ? "current-password" : "new-password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  minLength={6}
+                  required
+                />
+              </div>
 
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading && <Loader2 className="mr-2 size-4 animate-spin" />}
-                {mode === "login" && "Sign in"}
-                {mode === "register" && "Create account"}
-                {mode === "forgot" && "Send reset link"}
+                {mode === "login" ? "Sign in" : "Create account"}
               </Button>
             </form>
 
-            {mode === "forgot" ? (
-              <button
-                type="button"
-                onClick={() => setMode("login")}
-                className="w-full text-sm text-muted-foreground underline-offset-4 hover:underline"
-              >
-                Back to sign in
-              </button>
-            ) : (
-              <>
-                <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                  <span className="h-px flex-1 bg-border" />
-                  or
-                  <span className="h-px flex-1 bg-border" />
-                </div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="w-full"
-                  onClick={handleGoogle}
-                  disabled={loading}
-                >
-                  Continue with Google
-                </Button>
-              </>
-            )}
+            <div className="flex items-center gap-3 text-xs text-muted-foreground">
+              <span className="h-px flex-1 bg-border" />
+              or
+              <span className="h-px flex-1 bg-border" />
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={handleGoogle}
+              disabled={loading}
+            >
+              Continue with Google
+            </Button>
           </CardContent>
         </Card>
       </section>
