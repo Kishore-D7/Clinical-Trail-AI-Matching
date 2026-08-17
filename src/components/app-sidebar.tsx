@@ -20,6 +20,8 @@ export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const pathname = useRouterState({ select: (r) => r.location.pathname });
+  const { data: user } = useCurrentUser();
+  const navItems = navItemsForRole(user?.role);
 
   return (
     <Sidebar collapsible="icon">
