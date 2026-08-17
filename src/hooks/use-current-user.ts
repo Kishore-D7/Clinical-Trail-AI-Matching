@@ -1,13 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { primaryRole, roleDescriptions, roleLabels, type AppRole } from "@/lib/roles";
 
-export type AppRole = "RESEARCHER" | "CLINICAL_COORDINATOR" | "ADMIN";
-
-export const roleLabels: Record<AppRole, string> = {
-  RESEARCHER: "Researcher",
-  CLINICAL_COORDINATOR: "Clinical Coordinator",
-  ADMIN: "Administrator",
-};
+export type { AppRole };
+export { roleLabels, roleDescriptions };
 
 export function useCurrentUser() {
   return useQuery({
@@ -23,11 +19,16 @@ export function useCurrentUser() {
         supabase.from("user_roles").select("role").eq("user_id", user.id),
       ]);
 
+      const roleList = (roles ?? []).map((r) => r.role as AppRole);
+
       return {
         id: user.id,
         email: user.email ?? "",
         profile,
-        roles: (roles ?? []).map((r) => r.role as AppRole),
+        roles: roleList,
+        role: primaryRole(roleList),
+        isActive: (profile as { is_active?: boolean } | null)?.is_active ?? true,
+        isAdmin: roleList.includes("ADMIN"),
       };
     },
   });
