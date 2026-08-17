@@ -9,6 +9,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
+import { RoleSelector } from "@/components/role-selector";
+import { APP_ROLES, type AppRole } from "@/lib/roles";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -37,6 +39,8 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [role, setRole] = useState<AppRole | null>(null);
+  const [roleError, setRoleError] = useState<string | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -46,6 +50,10 @@ function AuthPage() {
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
+    if (mode === "register" && !role) {
+      setRoleError("Please select a role to continue.");
+      return;
+    }
     setLoading(true);
     try {
       if (mode === "login") {
@@ -57,7 +65,10 @@ function AuthPage() {
           password,
           options: {
             emailRedirectTo: window.location.origin,
-            data: { full_name: fullName, requested_role: "RESEARCHER" },
+            data: {
+              full_name: fullName,
+              requested_role: role === "ADMIN" ? "RESEARCHER" : (role ?? "RESEARCHER"),
+            },
           },
         });
         if (error) throw error;
@@ -67,6 +78,9 @@ function AuthPage() {
             password,
           });
           if (signInError) throw signInError;
+        }
+        if (role === "ADMIN") {
+          toast.info("Admin access needs approval — you start as Researcher.");
         }
       }
       navigate({ to: "/dashboard", replace: true });
@@ -157,6 +171,18 @@ function AuthPage() {
                     required
                   />
                 </div>
+              )}
+
+              {mode === "register" && (
+                <RoleSelector
+                  value={role}
+                  onChange={(next) => {
+                    setRole(next);
+                    setRoleError(null);
+                  }}
+                  roles={APP_ROLES}
+                  error={roleError}
+                />
               )}
 
               <div className="space-y-2">
