@@ -25,6 +25,7 @@ import { Route as AuthenticatedMonitoringRouteImport } from './routes/_authentic
 import { Route as AuthenticatedPatientProcessingRouteImport } from './routes/_authenticated/patient-processing'
 import { Route as AuthenticatedPatientsRouteImport } from './routes/_authenticated/patients'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedUsersRouteImport } from './routes/_authenticated/users'
 import { Route as AuthenticatedClinicalTrialsTrialIdRouteImport } from './routes/_authenticated/clinical-trials_.$trialId'
 import { Route as AuthenticatedPatientsPatientIdRouteImport } from './routes/_authenticated/patients_.$patientId'
 import { Route as AuthenticatedTrialCandidatesTrialIdRouteImport } from './routes/_authenticated/trial-candidates.$trialId'
@@ -112,6 +113,11 @@ const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedUsersRoute = AuthenticatedUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedClinicalTrialsTrialIdRoute =
   AuthenticatedClinicalTrialsTrialIdRouteImport.update({
     id: '/clinical-trials_/$trialId',
@@ -153,6 +159,7 @@ export interface FileRoutesByFullPath {
   '/patient-processing': typeof AuthenticatedPatientProcessingRoute
   '/patients': typeof AuthenticatedPatientsRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/users': typeof AuthenticatedUsersRoute
   '/clinical-trials/$trialId': typeof AuthenticatedClinicalTrialsTrialIdRoute
   '/patients/$patientId': typeof AuthenticatedPatientsPatientIdRoute
   '/trial-candidates/$trialId': typeof AuthenticatedTrialCandidatesTrialIdRoute
@@ -174,6 +181,7 @@ export interface FileRoutesByTo {
   '/patient-processing': typeof AuthenticatedPatientProcessingRoute
   '/patients': typeof AuthenticatedPatientsRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/users': typeof AuthenticatedUsersRoute
   '/clinical-trials/$trialId': typeof AuthenticatedClinicalTrialsTrialIdRoute
   '/patients/$patientId': typeof AuthenticatedPatientsPatientIdRoute
   '/trial-candidates/$trialId': typeof AuthenticatedTrialCandidatesTrialIdRoute
@@ -197,6 +205,7 @@ export interface FileRoutesById {
   '/_authenticated/patient-processing': typeof AuthenticatedPatientProcessingRoute
   '/_authenticated/patients': typeof AuthenticatedPatientsRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/users': typeof AuthenticatedUsersRoute
   '/_authenticated/clinical-trials_/$trialId': typeof AuthenticatedClinicalTrialsTrialIdRoute
   '/_authenticated/patients_/$patientId': typeof AuthenticatedPatientsPatientIdRoute
   '/_authenticated/trial-candidates/$trialId': typeof AuthenticatedTrialCandidatesTrialIdRoute
@@ -220,6 +229,7 @@ export interface FileRouteTypes {
     | '/patient-processing'
     | '/patients'
     | '/settings'
+    | '/users'
     | '/clinical-trials/$trialId'
     | '/patients/$patientId'
     | '/trial-candidates/$trialId'
@@ -241,6 +251,7 @@ export interface FileRouteTypes {
     | '/patient-processing'
     | '/patients'
     | '/settings'
+    | '/users'
     | '/clinical-trials/$trialId'
     | '/patients/$patientId'
     | '/trial-candidates/$trialId'
@@ -263,6 +274,7 @@ export interface FileRouteTypes {
     | '/_authenticated/patient-processing'
     | '/_authenticated/patients'
     | '/_authenticated/settings'
+    | '/_authenticated/users'
     | '/_authenticated/clinical-trials_/$trialId'
     | '/_authenticated/patients_/$patientId'
     | '/_authenticated/trial-candidates/$trialId'
@@ -391,6 +403,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/users': {
+      id: '/_authenticated/users'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof AuthenticatedUsersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/clinical-trials_/$trialId': {
       id: '/_authenticated/clinical-trials_/$trialId'
       path: '/clinical-trials/$trialId'
@@ -434,6 +453,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPatientProcessingRoute: typeof AuthenticatedPatientProcessingRoute
   AuthenticatedPatientsRoute: typeof AuthenticatedPatientsRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedUsersRoute: typeof AuthenticatedUsersRoute
   AuthenticatedClinicalTrialsTrialIdRoute: typeof AuthenticatedClinicalTrialsTrialIdRoute
   AuthenticatedPatientsPatientIdRoute: typeof AuthenticatedPatientsPatientIdRoute
   AuthenticatedTrialCandidatesTrialIdRoute: typeof AuthenticatedTrialCandidatesTrialIdRoute
@@ -452,6 +472,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPatientProcessingRoute: AuthenticatedPatientProcessingRoute,
   AuthenticatedPatientsRoute: AuthenticatedPatientsRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedUsersRoute: AuthenticatedUsersRoute,
   AuthenticatedClinicalTrialsTrialIdRoute:
     AuthenticatedClinicalTrialsTrialIdRoute,
   AuthenticatedPatientsPatientIdRoute: AuthenticatedPatientsPatientIdRoute,
