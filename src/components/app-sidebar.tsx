@@ -1,7 +1,8 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Stethoscope } from "lucide-react";
 
-import { navItems } from "@/lib/nav";
+import { navItemsForRole } from "@/lib/nav";
+import { useCurrentUser } from "@/hooks/use-current-user";
 import {
   Sidebar,
   SidebarContent,
