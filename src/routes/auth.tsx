@@ -197,6 +197,14 @@ function AuthPage() {
                       placeholder="Northside Research Institute"
                     />
                   </div>
+                  <RoleSelector
+                    value={role}
+                    onChange={(next) => {
+                      setRole(next);
+                      setRoleError(null);
+                    }}
+                    error={roleError}
+                  />
                 </>
               )}
 
