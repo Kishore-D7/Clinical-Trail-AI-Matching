@@ -26,7 +26,7 @@ export function TopBar() {
   const { data: user } = useCurrentUser();
 
   const name = user?.profile?.full_name ?? user?.email ?? "";
-  const role = user?.roles?.[0];
+  const role = user?.role;
 
   async function handleSignOut() {
     await queryClient.cancelQueries();

@@ -9,6 +9,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
+import { RoleSelector } from "@/components/role-selector";
+import type { AppRole } from "@/lib/roles";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -39,6 +41,8 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [organization, setOrganization] = useState("");
+  const [role, setRole] = useState<AppRole | null>(null);
+  const [roleError, setRoleError] = useState<string | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -55,15 +59,27 @@ function AuthPage() {
         if (error) throw error;
         navigate({ to: "/dashboard", replace: true });
       } else if (mode === "register") {
+        if (!role) {
+          setRoleError("Please select a role to continue.");
+          return;
+        }
+        // ADMIN is never self-granted: the account starts as Researcher and an
+        // existing administrator promotes it later.
+        const requestedRole = role === "ADMIN" ? "RESEARCHER" : role;
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
             emailRedirectTo: window.location.origin,
-            data: { full_name: fullName, organization },
+            data: { full_name: fullName, organization, requested_role: requestedRole },
           },
         });
         if (error) throw error;
+        if (role === "ADMIN") {
+          toast.info(
+            "Administrator access must be granted by an existing administrator. Your account starts as Researcher.",
+          );
+        }
         if (data.session) {
           navigate({ to: "/dashboard", replace: true });
         } else {
@@ -181,6 +197,14 @@ function AuthPage() {
                       placeholder="Northside Research Institute"
                     />
                   </div>
+                  <RoleSelector
+                    value={role}
+                    onChange={(next) => {
+                      setRole(next);
+                      setRoleError(null);
+                    }}
+                    error={roleError}
+                  />
                 </>
               )}
 

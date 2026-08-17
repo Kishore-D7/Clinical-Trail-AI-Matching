@@ -1,7 +1,8 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Stethoscope } from "lucide-react";
 
-import { navItems } from "@/lib/nav";
+import { navItemsForRole } from "@/lib/nav";
+import { useCurrentUser } from "@/hooks/use-current-user";
 import {
   Sidebar,
   SidebarContent,
@@ -19,6 +20,8 @@ export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const pathname = useRouterState({ select: (r) => r.location.pathname });
+  const { data: user } = useCurrentUser();
+  const navItems = navItemsForRole(user?.role);
 
   return (
     <Sidebar collapsible="icon">

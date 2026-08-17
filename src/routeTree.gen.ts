@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as CompleteProfileRouteImport } from './routes/complete-profile'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthenticatedAiMatchingRouteImport } from './routes/_authenticated/ai-matching'
 import { Route as AuthenticatedClinicalTrialsRouteImport } from './routes/_authenticated/clinical-trials'
@@ -24,6 +25,7 @@ import { Route as AuthenticatedMonitoringRouteImport } from './routes/_authentic
 import { Route as AuthenticatedPatientProcessingRouteImport } from './routes/_authenticated/patient-processing'
 import { Route as AuthenticatedPatientsRouteImport } from './routes/_authenticated/patients'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedUsersRouteImport } from './routes/_authenticated/users'
 import { Route as AuthenticatedClinicalTrialsTrialIdRouteImport } from './routes/_authenticated/clinical-trials_.$trialId'
 import { Route as AuthenticatedPatientsPatientIdRouteImport } from './routes/_authenticated/patients_.$patientId'
 import { Route as AuthenticatedTrialCandidatesTrialIdRouteImport } from './routes/_authenticated/trial-candidates.$trialId'
@@ -41,6 +43,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompleteProfileRoute = CompleteProfileRouteImport.update({
+  id: '/complete-profile',
+  path: '/complete-profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -106,6 +113,11 @@ const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedUsersRoute = AuthenticatedUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedClinicalTrialsTrialIdRoute =
   AuthenticatedClinicalTrialsTrialIdRouteImport.update({
     id: '/clinical-trials_/$trialId',
@@ -134,6 +146,7 @@ const AuthenticatedPatientProcessingJobIdReviewRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/complete-profile': typeof CompleteProfileRoute
   '/reset-password': typeof ResetPasswordRoute
   '/ai-matching': typeof AuthenticatedAiMatchingRoute
   '/clinical-trials': typeof AuthenticatedClinicalTrialsRoute
@@ -146,6 +159,7 @@ export interface FileRoutesByFullPath {
   '/patient-processing': typeof AuthenticatedPatientProcessingRoute
   '/patients': typeof AuthenticatedPatientsRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/users': typeof AuthenticatedUsersRoute
   '/clinical-trials/$trialId': typeof AuthenticatedClinicalTrialsTrialIdRoute
   '/patients/$patientId': typeof AuthenticatedPatientsPatientIdRoute
   '/trial-candidates/$trialId': typeof AuthenticatedTrialCandidatesTrialIdRoute
@@ -154,6 +168,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/complete-profile': typeof CompleteProfileRoute
   '/reset-password': typeof ResetPasswordRoute
   '/ai-matching': typeof AuthenticatedAiMatchingRoute
   '/clinical-trials': typeof AuthenticatedClinicalTrialsRoute
@@ -166,6 +181,7 @@ export interface FileRoutesByTo {
   '/patient-processing': typeof AuthenticatedPatientProcessingRoute
   '/patients': typeof AuthenticatedPatientsRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/users': typeof AuthenticatedUsersRoute
   '/clinical-trials/$trialId': typeof AuthenticatedClinicalTrialsTrialIdRoute
   '/patients/$patientId': typeof AuthenticatedPatientsPatientIdRoute
   '/trial-candidates/$trialId': typeof AuthenticatedTrialCandidatesTrialIdRoute
@@ -176,6 +192,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/complete-profile': typeof CompleteProfileRoute
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/ai-matching': typeof AuthenticatedAiMatchingRoute
   '/_authenticated/clinical-trials': typeof AuthenticatedClinicalTrialsRoute
@@ -188,6 +205,7 @@ export interface FileRoutesById {
   '/_authenticated/patient-processing': typeof AuthenticatedPatientProcessingRoute
   '/_authenticated/patients': typeof AuthenticatedPatientsRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/users': typeof AuthenticatedUsersRoute
   '/_authenticated/clinical-trials_/$trialId': typeof AuthenticatedClinicalTrialsTrialIdRoute
   '/_authenticated/patients_/$patientId': typeof AuthenticatedPatientsPatientIdRoute
   '/_authenticated/trial-candidates/$trialId': typeof AuthenticatedTrialCandidatesTrialIdRoute
@@ -198,6 +216,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/complete-profile'
     | '/reset-password'
     | '/ai-matching'
     | '/clinical-trials'
@@ -210,6 +229,7 @@ export interface FileRouteTypes {
     | '/patient-processing'
     | '/patients'
     | '/settings'
+    | '/users'
     | '/clinical-trials/$trialId'
     | '/patients/$patientId'
     | '/trial-candidates/$trialId'
@@ -218,6 +238,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/complete-profile'
     | '/reset-password'
     | '/ai-matching'
     | '/clinical-trials'
@@ -230,6 +251,7 @@ export interface FileRouteTypes {
     | '/patient-processing'
     | '/patients'
     | '/settings'
+    | '/users'
     | '/clinical-trials/$trialId'
     | '/patients/$patientId'
     | '/trial-candidates/$trialId'
@@ -239,6 +261,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/complete-profile'
     | '/reset-password'
     | '/_authenticated/ai-matching'
     | '/_authenticated/clinical-trials'
@@ -251,6 +274,7 @@ export interface FileRouteTypes {
     | '/_authenticated/patient-processing'
     | '/_authenticated/patients'
     | '/_authenticated/settings'
+    | '/_authenticated/users'
     | '/_authenticated/clinical-trials_/$trialId'
     | '/_authenticated/patients_/$patientId'
     | '/_authenticated/trial-candidates/$trialId'
@@ -261,6 +285,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  CompleteProfileRoute: typeof CompleteProfileRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
 }
 
@@ -285,6 +310,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/complete-profile': {
+      id: '/complete-profile'
+      path: '/complete-profile'
+      fullPath: '/complete-profile'
+      preLoaderRoute: typeof CompleteProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -371,6 +403,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/users': {
+      id: '/_authenticated/users'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof AuthenticatedUsersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/clinical-trials_/$trialId': {
       id: '/_authenticated/clinical-trials_/$trialId'
       path: '/clinical-trials/$trialId'
@@ -414,6 +453,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPatientProcessingRoute: typeof AuthenticatedPatientProcessingRoute
   AuthenticatedPatientsRoute: typeof AuthenticatedPatientsRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedUsersRoute: typeof AuthenticatedUsersRoute
   AuthenticatedClinicalTrialsTrialIdRoute: typeof AuthenticatedClinicalTrialsTrialIdRoute
   AuthenticatedPatientsPatientIdRoute: typeof AuthenticatedPatientsPatientIdRoute
   AuthenticatedTrialCandidatesTrialIdRoute: typeof AuthenticatedTrialCandidatesTrialIdRoute
@@ -432,6 +472,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPatientProcessingRoute: AuthenticatedPatientProcessingRoute,
   AuthenticatedPatientsRoute: AuthenticatedPatientsRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedUsersRoute: AuthenticatedUsersRoute,
   AuthenticatedClinicalTrialsTrialIdRoute:
     AuthenticatedClinicalTrialsTrialIdRoute,
   AuthenticatedPatientsPatientIdRoute: AuthenticatedPatientsPatientIdRoute,
@@ -448,6 +489,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  CompleteProfileRoute: CompleteProfileRoute,
   ResetPasswordRoute: ResetPasswordRoute,
 }
 export const routeTree = rootRouteImport
