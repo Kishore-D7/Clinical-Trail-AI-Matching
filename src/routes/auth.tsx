@@ -173,6 +173,18 @@ function AuthPage() {
                 </div>
               )}
 
+              {mode === "register" && (
+                <RoleSelector
+                  value={role}
+                  onChange={(next) => {
+                    setRole(next);
+                    setRoleError(null);
+                  }}
+                  roles={APP_ROLES}
+                  error={roleError}
+                />
+              )}
+
               <div className="space-y-2">
                 <Label htmlFor="email">Work email</Label>
                 <Input
