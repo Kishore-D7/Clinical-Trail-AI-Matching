@@ -50,6 +50,10 @@ function AuthPage() {
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
+    if (mode === "register" && !role) {
+      setRoleError("Please select a role to continue.");
+      return;
+    }
     setLoading(true);
     try {
       if (mode === "login") {
