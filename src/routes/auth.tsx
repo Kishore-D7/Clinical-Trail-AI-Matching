@@ -65,7 +65,10 @@ function AuthPage() {
           password,
           options: {
             emailRedirectTo: window.location.origin,
-            data: { full_name: fullName, requested_role: "RESEARCHER" },
+            data: {
+              full_name: fullName,
+              requested_role: role === "ADMIN" ? "RESEARCHER" : (role ?? "RESEARCHER"),
+            },
           },
         });
         if (error) throw error;
