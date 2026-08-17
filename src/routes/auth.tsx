@@ -9,6 +9,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
+import { RoleSelector } from "@/components/role-selector";
+import type { AppRole } from "@/lib/roles";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
