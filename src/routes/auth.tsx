@@ -79,6 +79,9 @@ function AuthPage() {
           });
           if (signInError) throw signInError;
         }
+        if (role === "ADMIN") {
+          toast.info("Admin access needs approval — you start as Researcher.");
+        }
       }
       navigate({ to: "/dashboard", replace: true });
     } catch (error) {
